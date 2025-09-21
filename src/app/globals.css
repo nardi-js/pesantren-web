@@ -1,26 +1,520 @@
+/* TailwindCSS v4: single import covers base, components, utilities */
 @import "tailwindcss";
+/* (Legacy mapping) Equivalent to: @tailwind base; @tailwind components; @tailwind utilities; */
 
+/* ===== Design System v2 (Light Theme) ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand (bright sky) */
+  --brand-50: 204 100% 97%;
+  --brand-100: 203 100% 93%;
+  --brand-200: 201 100% 86%;
+  --brand-300: 199 95% 74%;
+  --brand-400: 199 93% 58%;
+  --brand-500: 199 89% 48%;
+  --brand-600: 200 98% 39%;
+  --brand-700: 201 96% 32%;
+  --brand-800: 203 90% 27%;
+  --brand-900: 206 75% 21%;
+
+  /* Semantic core surfaces */
+  --background: 0 0% 100%;
+  --surface: 0 0% 100%; /* base surface */
+  --surface-alt: 210 40% 97%; /* subtle alternate (soft gray-blue) */
+  --surface-muted: 210 40% 96%;
+  --surface-inverse: 222 47% 11%;
+  --elevated: 0 0% 100%;
+  --overlay: 210 40% 4%;
+
+  /* Text colors */
+  --foreground: 222 47% 11%;
+  --foreground-soft: 215 16% 47%;
+  --foreground-muted: 215 20% 65%;
+  --foreground-on-dark: 210 40% 98%;
+
+  /* Borders & lines */
+  --border: 214 32% 91%;
+  --border-strong: 215 28% 80%;
+  --divider: 214 32% 91%;
+
+  /* Interactive tokens */
+  --primary: var(--brand-500);
+  --primary-hover: var(--brand-600);
+  --primary-active: var(--brand-700);
+  --primary-foreground: 0 0% 100%;
+  --secondary: 160 84% 39%;
+  --secondary-hover: 160 84% 35%;
+  --secondary-foreground: 0 0% 100%;
+  --focus-ring: var(--brand-400);
+
+  /* Radii & shadows */
+  --radius-sm: 0.5rem;
+  --radius: 0.9rem;
+  --radius-lg: 1.25rem;
+  --shadow-sm: 0 1px 2px 0 hsl(215 28% 17% / 0.06),
+    0 1px 3px 1px hsl(215 28% 17% / 0.06);
+  --shadow: 0 2px 4px -2px hsl(215 28% 17% / 0.08),
+    0 4px 6px -1px hsl(215 28% 17% / 0.1);
+  --shadow-lg: 0 8px 16px -4px hsl(215 28% 17% / 0.1),
+    0 4px 6px -2px hsl(215 28% 17% / 0.05);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* ===== Dark Theme ===== */
+.dark {
+  --background: 222 47% 10%;
+  --surface: 222 47% 11%;
+  --surface-alt: 220 40% 17%;
+  --surface-muted: 220 35% 21%;
+  --surface-inverse: 0 0% 100%;
+  --elevated: 222 47% 16%;
+  --overlay: 210 40% 2%;
+
+  --foreground: 210 40% 96%;
+  --foreground-soft: 215 16% 72%;
+  --foreground-muted: 215 16% 55%;
+  --foreground-on-dark: 222 47% 11%;
+
+  --border: 220 40% 25%;
+  --border-strong: 220 40% 35%;
+  --divider: 220 40% 25%;
+
+  --primary: var(--brand-400);
+  --primary-hover: var(--brand-300);
+  --primary-active: var(--brand-200);
+  --primary-foreground: 222 47% 11%;
+  --secondary: 160 84% 45%;
+  --secondary-hover: 160 84% 50%;
+  --secondary-foreground: 222 47% 11%;
+  --focus-ring: var(--brand-300);
+}
+
+/* Expose token variables as CSS custom properties without Tailwind @theme */
+:root {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Modern button and interactive element base */
+/* Buttons */
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-xl font-semibold tracking-wide px-6 py-3 text-sm md:text-base transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 1) 0%,
+    hsl(var(--primary-hover) / 1) 90%
+  );
+  color: hsl(var(--primary-foreground));
+  box-shadow: var(--shadow);
+}
+.btn-primary:hover {
+  filter: brightness(1.05) saturate(1.1);
+  box-shadow: var(--shadow-lg);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+}
+.btn-outline {
+  @apply inline-flex items-center justify-center rounded-xl font-semibold tracking-wide px-6 py-3 text-sm md:text-base transition-all duration-200 border;
+  border-color: hsl(var(--border));
+  background: hsl(var(--surface));
+  color: hsl(var(--foreground));
+}
+.dark .btn-outline {
+  border-color: hsl(var(--border));
+  background: hsl(var(--surface));
+}
+.btn-outline:hover {
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-xl font-medium px-4 py-2 text-sm transition-colors;
+  color: hsl(var(--foreground-soft));
+}
+.btn-ghost:hover {
+  color: hsl(var(--primary));
+  background: hsl(var(--surface-alt));
+}
+
+/* Modern card styling */
+/* Card / surfaces */
+.surface-card {
+  background: hsl(var(--surface));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease, color 0.3s ease;
+}
+.dark .surface-card {
+  background: hsl(var(--surface));
+  border-color: hsl(var(--border));
+}
+.surface-card.elevated {
+  background: hsl(var(--elevated));
+  box-shadow: var(--shadow);
+}
+.surface-card.hoverable:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: hsl(var(--primary));
+}
+
+/* Enhanced Theme Transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke,
+    box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Islamic Patterns & Animations */
+.islamic-pattern {
+  position: relative;
+  overflow: hidden;
+}
+.islamic-pattern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(16, 185, 129, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(14, 165, 233, 0.1) 0%,
+      transparent 50%
+    );
+  opacity: 0.6;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+.dark .islamic-pattern::before {
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(16, 185, 129, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(14, 165, 233, 0.05) 0%,
+      transparent 50%
+    );
+}
+
+/* Section patterns */
+.section-base {
+  background: hsl(var(--background));
+}
+.section-alt {
+  background: hsl(var(--surface-alt));
+}
+.section-muted {
+  background: hsl(var(--surface-muted));
+}
+.section-inverse {
+  background: hsl(var(--surface-inverse));
+  color: hsl(var(--foreground-on-dark));
+}
+
+/* Headings scale utilities */
+.heading-xl {
+  @apply font-bold tracking-tight leading-tight text-4xl md:text-6xl;
+}
+.heading-lg {
+  @apply font-bold tracking-tight text-3xl md:text-5xl;
+}
+.heading-md {
+  @apply font-bold tracking-tight text-2xl md:text-4xl;
+}
+.heading-sm {
+  @apply font-semibold tracking-tight text-xl md:text-2xl;
+}
+
+/* Text helpers */
+.text-soft {
+  color: hsl(var(--foreground-soft));
+}
+.text-muted {
+  color: hsl(var(--foreground-muted));
+}
+.dark .text-soft {
+  color: hsl(var(--foreground-soft));
+}
+.dark .text-muted {
+  color: hsl(var(--foreground-muted));
+}
+
+/* Enhanced section separators for better contrast */
+/* (Removed legacy section-* classes; use Section component variants instead) */
+
+/* Animations */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.animate-zoom-in {
+  animation: zoom-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Animation delay utilities */
+.animation-delay-0 {
+  animation-delay: 0ms;
+}
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+.animation-delay-2000 {
+  animation-delay: 2000ms;
+}
+
+/* Custom Keyframes for Hero Section */
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes text-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(14, 165, 233, 0.5),
+      0 0 40px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Blog specific utilities */
+.gradient-text {
+  background: linear-gradient(135deg, #0ea5e9, #10b981, #0ea5e9);
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-title-glow {
+  animation: text-glow 4s ease-in-out infinite;
+}
+
+.floating-element {
+  animation: hero-float 6s ease-in-out infinite;
+}
+
+/* Islamic Design Elements */
+.bg-islamic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3Ccircle cx='15' cy='15' r='2'/%3E%3Ccircle cx='45' cy='15' r='2'/%3E%3Ccircle cx='15' cy='45' r='2'/%3E%3Ccircle cx='45' cy='45' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Professional Islamic Geometric Pattern */
+.islamic-geometric {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.05'%3E%3Cpolygon points='40,0 60,30 40,60 20,30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Mosque Inspired Elements */
+.mosque-accent {
+  background: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Reading optimized typography */
+.optimal-reading {
+  font-family: "Inter", "system-ui", "-apple-system", sans-serif;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  word-spacing: 0.05em;
+}
+
+/* Subtle animations for Islamic elements */
+@keyframes islamic-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+  }
+}
+
+.islamic-glow {
+  animation: islamic-glow 4s ease-in-out infinite;
+}
+
+/* Breaking News Ticker Animation */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.ticker-content {
+  animation: ticker-scroll 20s linear infinite;
+}
+
+/* News card animations */
+@keyframes newsCardHover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-8px);
+  }
+}
+
+.news-card:hover {
+  animation: newsCardHover 0.3s ease-out forwards;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 3;
+}
+
+/* Animation delays */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Carousel smooth transitions */
+.carousel-smooth {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prefer-reduced-motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-zoom-in,
+  .ticker-content,
+  .news-card:hover {
+    animation: none !important;
+  }
+
+  .carousel-smooth {
+    transition: none !important;
+  }
+}
+
+/* Utility layer additions */
+.app-container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  max-width: 80rem;
+}
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Focus ring override */
+:focus-visible {
+  outline: 2px solid hsl(var(--focus-ring));
+  outline-offset: 2px;
+}
+
+/* Scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Progress bar utility for dynamic widths */
+.progress-bar {
+  width: var(--progress-width, 0%);
 }

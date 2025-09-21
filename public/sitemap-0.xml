@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>http://localhost:3000</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/blog</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/news</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/blog/kegiatan-malam-santri</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/blog/kisah-inspiratif-santri-baru</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/blog/membangun-disiplin-harian</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/blog/mengoptimalkan-waktu-belajar</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/gallery</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/profile</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/donate</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/testimonials</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/events</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/contact</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/news/pelatihan-tahfidz-intensif-ramadhan-1447h</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/admin</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/events/bakti-sosial-ramadhan</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/events/kajian-subuh-rutin</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/events/latihan-futsal-santri</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/events/seminar-motivasi-prestasi</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/events/workshop-kaligrafi</loc><lastmod>2025-09-20T22:53:57.662Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>
