@@ -36,7 +36,7 @@ const facilities = [
     id: 5,
     title: "Lapangan Olahraga",
     desc: "Fasilitas olahraga untuk kesehatan jasmani.",
-    img: "/lapangan.jpg",
+    img: "/Lapangan.jpg",
     icon: "⚽",
   },
   {
