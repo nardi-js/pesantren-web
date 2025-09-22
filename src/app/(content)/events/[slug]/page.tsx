@@ -6,6 +6,7 @@ import connectToDatabase from "@/lib/db";
 import Event from "@/models/Event";
 import { IEvent } from "@/models/Event";
 import ShareButton from "@/components/events/ShareButton";
+import YouTubePlayer from "@/components/YouTubePlayer";
 
 interface EventDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -88,7 +89,7 @@ export default async function EventDetailPage({
 }: EventDetailPageProps) {
   const resolvedParams = await params;
   const event = await getEvent(resolvedParams.slug);
-
+  
   if (!event) {
     notFound();
   }
@@ -284,6 +285,19 @@ export default async function EventDetailPage({
                   </div>
                 )}
               </div>
+
+              {/* YouTube Video */}
+              {event.youtubeUrl && (
+                <div className="surface-card elevated p-8 rounded-xl">
+                  <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-6">
+                    Video Event
+                  </h2>
+                  <YouTubePlayer
+                    url={event.youtubeUrl}
+                    title={`Video: ${event.title}`}
+                  />
+                </div>
+              )}
 
               {/* Content */}
               {event.content && (

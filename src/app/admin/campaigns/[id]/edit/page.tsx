@@ -177,7 +177,10 @@ export default function EditCampaignPage({ params }: CampaignEditPageProps) {
         delete submitData.endDate;
       }
 
-      const response = await AdminApi.updateCampaign(resolvedParams.id, submitData);
+      const response = await AdminApi.updateCampaign(
+        resolvedParams.id,
+        submitData
+      );
 
       if (response.success) {
         push("Campaign updated successfully!", "success");

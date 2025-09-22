@@ -71,11 +71,10 @@ export async function PUT(
     // Remove fields that shouldn't be updated directly
     const { ...updateData } = body;
 
-    const campaign = await DonationCampaign.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    ).lean();
+    const campaign = await DonationCampaign.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    }).lean();
 
     if (!campaign) {
       return NextResponse.json(

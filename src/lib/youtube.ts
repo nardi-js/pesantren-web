@@ -1,7 +1,7 @@
 // Utility function to extract YouTube video ID from various YouTube URL formats
 export function extractYouTubeVideoId(url: string): string | null {
   if (!url) return null;
-  
+
   const patterns = [
     // Regular YouTube URLs
     /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
@@ -24,7 +24,10 @@ export function extractYouTubeVideoId(url: string): string | null {
 }
 
 // Generate YouTube thumbnail URL
-export function getYouTubeThumbnail(videoId: string, quality: 'default' | 'medium' | 'high' | 'standard' | 'maxres' = 'medium'): string {
+export function getYouTubeThumbnail(
+  videoId: string,
+  quality: "default" | "medium" | "high" | "standard" | "maxres" = "medium"
+): string {
   return `https://img.youtube.com/vi/${videoId}/${quality}default.jpg`;
 }
 

@@ -47,7 +47,7 @@ export default function EventEditPage({ params }: EventEditPageProps) {
       try {
         setIsLoading(true);
         const response = await AdminApi.getEventById(resolvedParams.id);
-
+          
         if (response.success && response.data) {
           const event = response.data as any;
           setFormData({
@@ -152,7 +152,10 @@ export default function EventEditPage({ params }: EventEditPageProps) {
 
       console.log("📤 Sending to API:", submitData);
 
-      const response = await AdminApi.updateEvent(resolvedParams.id, submitData);
+      const response = await AdminApi.updateEvent(
+        resolvedParams.id,
+        submitData
+      );
       console.log("📥 API Response:", response);
 
       if (response.success) {

@@ -77,6 +77,7 @@ export async function PUT(
         description: data.description,
         content: data.content,
         featuredImage: data.featuredImage,
+        youtubeUrl: data.youtubeUrl,
         date: data.date ? new Date(data.date) : undefined,
         time: data.time,
         location: data.location,

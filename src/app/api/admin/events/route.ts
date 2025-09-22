@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
     console.log("📋 Events POST data:", data);
+    console.log("🎬 YouTube URL received:", data.youtubeUrl);
 
     const event = new Event({
       title: data.title,
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
       description: data.description,
       content: data.content,
       featuredImage: data.featuredImage,
+      youtubeUrl: data.youtubeUrl,
       date: data.date ? new Date(data.date) : new Date(),
       time: data.time,
       location: data.location,

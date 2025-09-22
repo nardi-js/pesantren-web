@@ -36,6 +36,10 @@ export default function NewEventPage() {
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
+    console.log(`🔄 Field changed: ${field} = ${value}`);
+    if (field === "youtubeUrl") {
+      console.log("🎬 YouTube URL updated:", value);
+    }
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -339,7 +343,13 @@ export default function NewEventPage() {
         <FormField label="YouTube Video" hint="Optional embed">
           <VideoEmbed
             value={formData.youtubeUrl}
-            onChange={(url) => handleInputChange("youtubeUrl", url)}
+            onChange={(url) => {
+              console.log(
+                "📋 Form: Received onChange from VideoEmbed with:",
+                url
+              );
+              handleInputChange("youtubeUrl", url);
+            }}
           />
         </FormField>
 
