@@ -86,7 +86,6 @@ export class BlogApi {
 
       return await response.json();
     } catch (error) {
-      console.error("Get blogs error:", error);
       return {
         success: false,
         data: {
@@ -116,7 +115,6 @@ export class BlogApi {
 
       return await response.json();
     } catch (error) {
-      console.error("Get blog by slug error:", error);
       return {
         success: false,
         data: {} as BlogPost,
@@ -139,7 +137,6 @@ export class BlogApi {
       }
       return [];
     } catch (error) {
-      console.error("Get categories error:", error);
       return [];
     }
   }

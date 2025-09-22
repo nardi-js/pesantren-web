@@ -9,8 +9,6 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    console.log("🔍 Testimonial GET API called for ID:", id);
-
     // Skip if ID is "new" (for create page)
     if (id === "new") {
       return NextResponse.json(
@@ -20,26 +18,19 @@ export async function GET(
     }
 
     await connectDB();
-    console.log("✅ Database connected for Testimonial GET");
-
     const testimonial = await Testimonial.findById(id).lean();
 
     if (!testimonial) {
-      console.log("❌ Testimonial not found:", id);
       return NextResponse.json(
         { success: false, message: "Testimonial not found" },
         { status: 404 }
       );
     }
-
-    console.log("✅ Testimonial found:", testimonial.name);
-
     return NextResponse.json({
       success: true,
       data: testimonial,
     });
   } catch (error) {
-    console.error("❌ Error in Testimonial GET API:", error);
     return NextResponse.json(
       {
         success: false,
@@ -58,14 +49,8 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    console.log("🔄 Testimonial UPDATE API called for ID:", id);
-
     await connectDB();
-    console.log("✅ Database connected for Testimonial UPDATE");
-
     const data = await request.json();
-    console.log("📋 Testimonial UPDATE data:", data);
-
     // Validate content length if content is being updated
     if (
       data.content !== undefined &&
@@ -103,23 +88,17 @@ export async function PUT(
     ).lean();
 
     if (!testimonial) {
-      console.log("❌ Testimonial not found for update:", params.id);
       return NextResponse.json(
         { success: false, message: "Testimonial not found" },
         { status: 404 }
       );
     }
-
-    console.log("✅ Testimonial updated successfully:", testimonial.name);
-
     return NextResponse.json({
       success: true,
       data: testimonial,
       message: "Testimonial updated successfully",
     });
   } catch (error: unknown) {
-    console.error("❌ Update testimonial error:", error);
-
     if (
       error &&
       typeof error === "object" &&
@@ -150,29 +129,20 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    console.log("🗑️ Testimonial DELETE API called for ID:", id);
-
     await connectDB();
-    console.log("✅ Database connected for Testimonial DELETE");
-
     const testimonial = await Testimonial.findByIdAndDelete(id).lean();
 
     if (!testimonial) {
-      console.log("❌ Testimonial not found for deletion:", id);
       return NextResponse.json(
         { success: false, message: "Testimonial not found" },
         { status: 404 }
       );
     }
-
-    console.log("✅ Testimonial deleted successfully:", testimonial.name);
-
     return NextResponse.json({
       success: true,
       message: "Testimonial deleted successfully",
     });
   } catch (error) {
-    console.error("❌ Delete testimonial error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete testimonial" },
       { status: 500 }

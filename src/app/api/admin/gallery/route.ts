@@ -6,11 +6,7 @@ import { handleFileUpload, handleMultipleFileUpload } from "@/lib/upload";
 // GET /api/admin/gallery - Get all gallery items with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Gallery GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Gallery GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -57,11 +53,6 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const total = await Gallery.countDocuments(filter);
-
-    console.log(
-      `✅ Found ${galleryItems.length} gallery items, total: ${total}`
-    );
-
     return NextResponse.json({
       success: true,
       data: {
@@ -75,7 +66,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Get gallery error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch gallery items" },
       { status: 500 }
@@ -86,18 +76,12 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/gallery - Create new gallery item
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Gallery POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Gallery POST");
-
     const contentType = request.headers.get("content-type");
 
     if (contentType?.includes("multipart/form-data")) {
       // Handle FormData with file uploads
       const formData = await request.formData();
-      console.log("📋 FormData received");
-
       // Extract basic data
       const galleryData = {
         title: formData.get("title") as string,
@@ -137,9 +121,6 @@ export async function POST(request: NextRequest) {
           .replace(/-+/g, "-")
           .trim();
       }
-
-      console.log("📋 Extracted galleryData:", galleryData);
-
       // Handle cover image upload
       const coverImageFile = formData.get("coverImage") as File;
       if (coverImageFile && coverImageFile.size > 0) {
@@ -276,8 +257,6 @@ export async function POST(request: NextRequest) {
 
       const gallery = new Gallery(galleryData);
       const savedGallery = await gallery.save();
-      console.log("✅ Gallery saved successfully:", savedGallery._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -289,8 +268,6 @@ export async function POST(request: NextRequest) {
     } else {
       // Handle JSON data (for YouTube-only items)
       const data = await request.json();
-      console.log("📋 JSON data received:", data);
-
       // Generate slug if not provided
       if (!data.slug && data.title) {
         data.slug = data.title
@@ -325,8 +302,6 @@ export async function POST(request: NextRequest) {
 
       const gallery = new Gallery(data);
       const savedGallery = await gallery.save();
-      console.log("✅ Gallery saved successfully:", savedGallery._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -337,7 +312,6 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("❌ Create gallery error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to create gallery item" },
       { status: 500 }

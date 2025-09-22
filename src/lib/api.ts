@@ -123,8 +123,6 @@ export class PublicApiClient {
    * Handle API errors
    */
   private static handleError<T>(error: unknown): ApiResponse<T> {
-    console.error("API Error:", error);
-
     if (error && typeof error === "object" && "response" in error) {
       const axiosError = error as AxiosError;
       // Server responded with error status
@@ -334,8 +332,6 @@ export class ApiClient {
    * Handle API errors
    */
   private static handleError<T>(error: unknown): ApiResponse<T> {
-    console.error("API Error:", error);
-
     if (error && typeof error === "object" && "response" in error) {
       const axiosError = error as AxiosError;
       // Server responded with error status

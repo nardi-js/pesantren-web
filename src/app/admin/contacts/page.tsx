@@ -82,7 +82,6 @@ function ContactsListClient() {
         throw new Error("Failed to fetch contacts");
       }
     } catch (error) {
-      console.error("Error fetching contacts:", error);
       push({
         title: "Error",
         description: "Gagal memuat data kontak",
@@ -122,7 +121,6 @@ function ContactsListClient() {
         throw new Error(result.error || "Failed to delete contact");
       }
     } catch (error) {
-      console.error("Delete error:", error);
       push({
         title: "Error",
         description: "Gagal menghapus pesan kontak",
@@ -164,7 +162,6 @@ function ContactsListClient() {
         throw new Error(result.error || "Failed to update status");
       }
     } catch (error) {
-      console.error("Update status error:", error);
       push({
         title: "Error",
         description: "Gagal mengubah status",

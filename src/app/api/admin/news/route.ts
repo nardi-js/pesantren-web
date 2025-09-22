@@ -50,10 +50,6 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const total = await News.countDocuments(filter);
-
-    console.log(`Found ${news.length} news articles, total: ${total}`);
-    console.log("News data:", news);
-
     return NextResponse.json({
       success: true,
       data: {
@@ -67,7 +63,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Get news error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }
@@ -81,19 +76,14 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const contentType = request.headers.get("content-type");
-    console.log("Content-Type:", contentType);
-
     if (contentType?.includes("multipart/form-data")) {
       // Handle file upload
       const formData = await request.formData();
 
       // Log received form data for debugging
-      console.log("Received form data:");
       for (const [key, value] of formData.entries()) {
         if (value instanceof File) {
-          console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
         } else {
-          console.log(`${key}: ${value}`);
         }
       }
 
@@ -129,13 +119,9 @@ export async function POST(request: NextRequest) {
           newsData.author.name = "Admin";
         }
       }
-
-      console.log("Processed news data:", JSON.stringify(newsData, null, 2));
-
       // Handle image upload
       const imageFile = formData.get("image") as File;
       if (imageFile && imageFile.size > 0) {
-        console.log("Processing image upload:", imageFile.name);
         const uploadResult = await handleFileUpload(request, {
           fieldName: "image",
           folder: "pesantren/news",
@@ -143,7 +129,6 @@ export async function POST(request: NextRequest) {
         });
 
         if (!uploadResult.success) {
-          console.error("Image upload failed:", uploadResult.error);
           return NextResponse.json(
             { success: false, error: uploadResult.error },
             { status: 400 }
@@ -151,9 +136,7 @@ export async function POST(request: NextRequest) {
         }
 
         newsData.image = uploadResult.data!.secure_url;
-        console.log("Image uploaded successfully:", newsData.image);
       } else {
-        console.log("No image file provided or file is empty");
         // Don't set image field if no file is provided
         delete newsData.image;
       }
@@ -171,8 +154,6 @@ export async function POST(request: NextRequest) {
     } else {
       // Handle JSON data
       const data = await request.json();
-      console.log("Received JSON data:", JSON.stringify(data, null, 2));
-
       // Process JSON data similar to FormData
       const newsData: Partial<INews> = {
         title: data.title,
@@ -208,12 +189,6 @@ export async function POST(request: NextRequest) {
           newsData.author.name = "Admin";
         }
       }
-
-      console.log(
-        "Processed JSON news data:",
-        JSON.stringify(newsData, null, 2)
-      );
-
       const news = new News(newsData);
       await news.save();
 
@@ -226,8 +201,6 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("Create news error:", error);
-
     if ((error as ValidationError).name === "ValidationError") {
       return NextResponse.json(
         {

@@ -154,7 +154,6 @@ function TestimonialsListClient() {
         throw new Error(result.error || "Failed to approve testimonial");
       }
     } catch (error) {
-      console.error("Error approving testimonial:", error);
       push("Failed to approve testimonial", "error");
     }
   };
@@ -184,7 +183,6 @@ function TestimonialsListClient() {
         throw new Error(result.error || "Failed to reject testimonial");
       }
     } catch (error) {
-      console.error("Error rejecting testimonial:", error);
       push("Failed to reject testimonial", "error");
     }
   };
@@ -221,7 +219,6 @@ function TestimonialsListClient() {
         throw new Error(result.error || "Failed to update featured status");
       }
     } catch (error) {
-      console.error("Error toggling featured status:", error);
       push("Failed to update featured status", "error");
     }
   };

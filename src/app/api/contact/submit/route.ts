@@ -5,14 +5,8 @@ import Contact from "@/models/Contact";
 // POST /api/contact/submit - Submit contact form from public
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Contact Form Submit API called");
-
     await connectDB();
-    console.log("✅ Database connected for Contact Submit");
-
     const data = await request.json();
-    console.log("📋 Contact Submit data:", data);
-
     // Validate required fields
     if (!data.name || !data.email || !data.subject || !data.message) {
       return NextResponse.json(
@@ -76,8 +70,6 @@ export async function POST(request: NextRequest) {
     });
 
     const savedContact = await contact.save();
-    console.log("✅ Contact form submitted successfully:", savedContact._id);
-
     return NextResponse.json(
       {
         success: true,
@@ -90,8 +82,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("❌ Submit contact form error:", error);
-
     if (error instanceof Error && error.name === "ValidationError") {
       const validationError = error as Error & { errors?: unknown };
       return NextResponse.json(

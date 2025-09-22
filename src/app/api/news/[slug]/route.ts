@@ -64,7 +64,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Get news by slug error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }

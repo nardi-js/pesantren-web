@@ -44,7 +44,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Event detail API error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch event" },
       { status: 500 }

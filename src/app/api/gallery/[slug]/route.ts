@@ -29,11 +29,7 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   try {
-    console.log("🔍 Gallery item GET API called for slug:", params.slug);
-
     await connectDB();
-    console.log("✅ Database connected for Gallery item GET");
-
     const { slug } = params;
 
     // Find gallery item by slug and ensure it's published
@@ -45,7 +41,6 @@ export async function GET(
       .lean()) as unknown as GalleryItemResponse;
 
     if (!galleryItem) {
-      console.log("❌ Gallery item not found or not published:", slug);
       return NextResponse.json(
         { success: false, message: "Gallery item not found" },
         { status: 404 }
@@ -56,15 +51,11 @@ export async function GET(
     await Gallery.findByIdAndUpdate(galleryItem._id, {
       $inc: { views: 1 },
     });
-
-    console.log("✅ Gallery item found:", galleryItem.title);
-
     return NextResponse.json({
       success: true,
       data: galleryItem,
     });
   } catch (error) {
-    console.error("❌ Error in Gallery item GET API:", error);
     return NextResponse.json(
       {
         success: false,

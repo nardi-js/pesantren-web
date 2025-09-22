@@ -146,21 +146,16 @@ export default function EditNewsPage({
     }
 
     setLoading(true);
-    console.log("🚀 Updating news data:", { ...formData, status });
-
     try {
       let imageUrl = formData.image || "";
 
       // Upload image to Cloudinary if selected
       if (selectedImage && !selectedImage.isUploaded) {
-        console.log("📤 Uploading selected image to Cloudinary...");
         const uploadResult = await uploadImageToCloudinary(selectedImage);
 
         if (uploadResult.success && uploadResult.url) {
           imageUrl = uploadResult.url;
-          console.log("✅ Image uploaded successfully:", imageUrl);
         } else {
-          console.error("❌ Image upload failed:", uploadResult.error);
           push(`Image upload failed: ${uploadResult.error}`, "error");
           setLoading(false);
           return;
@@ -186,12 +181,7 @@ export default function EditNewsPage({
           .filter((tag) => tag),
         image: imageUrl,
       };
-
-      console.log("📤 Sending to API:", submitData);
-
       const response = await AdminApi.updateNews(newsId, submitData);
-      console.log("📥 API Response:", response);
-
       if (response.success) {
         push(
           `News article ${
@@ -204,7 +194,6 @@ export default function EditNewsPage({
         throw new Error(response.error || "Failed to update news");
       }
     } catch (error) {
-      console.error("❌ News update error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update news";
       push(errorMessage, "error");

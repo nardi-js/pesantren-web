@@ -5,11 +5,7 @@ import Contact from "@/models/Contact";
 // GET /api/admin/contacts - Get all contact messages with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Contacts GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Contacts GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -72,9 +68,6 @@ export async function GET(request: NextRequest) {
         statusCounts[stat._id as keyof typeof statusCounts] = stat.count;
       }
     });
-
-    console.log(`✅ Found ${contacts.length} contacts, total: ${total}`);
-
     return NextResponse.json({
       success: true,
       data: contacts,
@@ -87,7 +80,6 @@ export async function GET(request: NextRequest) {
       stats: statusCounts,
     });
   } catch (error: unknown) {
-    console.error("❌ Contacts GET error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch contacts" },
       { status: 500 }
@@ -98,14 +90,8 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/contacts - Create new contact (admin use)
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Contacts POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Contacts POST");
-
     const data = await request.json();
-    console.log("📋 Contacts POST data:", data);
-
     // Validate required fields
     if (!data.name || !data.email || !data.subject || !data.message) {
       return NextResponse.json(
@@ -126,8 +112,6 @@ export async function POST(request: NextRequest) {
     });
 
     const savedContact = await contact.save();
-    console.log("✅ Contact saved successfully:", savedContact._id);
-
     return NextResponse.json(
       {
         success: true,
@@ -137,8 +121,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("❌ Contacts POST error:", error);
-
     if (error instanceof Error && error.name === "ValidationError") {
       const validationError = error as Error & { errors?: unknown };
       return NextResponse.json(

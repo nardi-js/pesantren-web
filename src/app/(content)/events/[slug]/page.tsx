@@ -24,6 +24,7 @@ async function getEvent(slug: string): Promise<IEvent | null> {
 
   return {
     ...event,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     _id: (event._id as any).toString(),
     date: (event.date as Date).toISOString(),
     createdAt: (event.createdAt as Date).toISOString(),

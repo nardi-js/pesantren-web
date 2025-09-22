@@ -39,7 +39,6 @@ export async function GET(
       data: news,
     });
   } catch (error) {
-    console.error("Get news by ID error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }
@@ -103,7 +102,6 @@ export async function PUT(
               await cloudinary.uploader.destroy(`pesantren/news/${publicId}`);
             }
           } catch (error) {
-            console.warn("Failed to delete old image:", error);
           }
         }
 
@@ -144,8 +142,6 @@ export async function PUT(
     } else {
       // Handle JSON data
       const data = await request.json();
-      console.log("Received JSON data:", JSON.stringify(data, null, 2));
-
       // Process JSON data properly
       const updateData: Partial<INews> = {
         title: data.title,
@@ -185,12 +181,6 @@ export async function PUT(
           updateData.author = { name: "Admin", email: "", role: "Admin" };
         }
       }
-
-      console.log(
-        "Processed JSON update data:",
-        JSON.stringify(updateData, null, 2)
-      );
-
       // Update publishedAt if status changed to published
       if (
         updateData.status === "published" &&
@@ -210,8 +200,6 @@ export async function PUT(
       });
     }
   } catch (error) {
-    console.error("Update news error:", error);
-
     if ((error as ValidationError).name === "ValidationError") {
       return NextResponse.json(
         {
@@ -257,7 +245,6 @@ export async function DELETE(
           await cloudinary.uploader.destroy(`pesantren/news/${publicId}`);
         }
       } catch (error) {
-        console.warn("Failed to delete image from Cloudinary:", error);
       }
     }
 
@@ -269,7 +256,6 @@ export async function DELETE(
       message: "News deleted successfully",
     });
   } catch (error) {
-    console.error("Delete news error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete news" },
       { status: 500 }

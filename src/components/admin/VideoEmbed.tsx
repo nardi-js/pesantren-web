@@ -17,9 +17,7 @@ export function VideoEmbed({ value = "", onChange }: VideoEmbedProps) {
   }, [value]);
 
   const handleChange = (newUrl: string) => {
-    console.log("📹 VideoEmbed: URL changed to:", newUrl);
     setUrl(newUrl);
-    console.log("📹 VideoEmbed: Calling onChange with:", newUrl);
     onChange?.(newUrl);
   };
 

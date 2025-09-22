@@ -74,7 +74,6 @@ export default function EventEditPage({ params }: EventEditPageProps) {
           });
         }
       } catch (error) {
-        console.error("Failed to load event:", error);
         push("Gagal memuat data event", "error");
       } finally {
         setIsLoading(false);
@@ -101,22 +100,17 @@ export default function EventEditPage({ params }: EventEditPageProps) {
     }
 
     setIsSubmitting(true);
-    console.log("🚀 Updating event data:", formData);
-
     try {
       let imageUrl =
         formData.featuredImage || "https://via.placeholder.com/800x400";
 
       // Upload image to Cloudinary if selected
       if (selectedImage && !selectedImage.isUploaded) {
-        console.log("📤 Uploading selected image to Cloudinary...");
         const uploadResult = await uploadImageToCloudinary(selectedImage);
 
         if (uploadResult.success && uploadResult.url) {
           imageUrl = uploadResult.url;
-          console.log("✅ Image uploaded successfully:", imageUrl);
         } else {
-          console.error("❌ Image upload failed:", uploadResult.error);
           push(`Image upload failed: ${uploadResult.error}`, "error");
           setIsSubmitting(false);
           return;
@@ -149,15 +143,10 @@ export default function EventEditPage({ params }: EventEditPageProps) {
         },
         status: formData.status,
       };
-
-      console.log("📤 Sending to API:", submitData);
-
       const response = await AdminApi.updateEvent(
         resolvedParams.id,
         submitData
       );
-      console.log("📥 API Response:", response);
-
       if (response.success) {
         push("Event berhasil diperbarui!", "success");
         router.push("/admin/events");
@@ -165,7 +154,6 @@ export default function EventEditPage({ params }: EventEditPageProps) {
         throw new Error(response.error || "Failed to update event");
       }
     } catch (error) {
-      console.error("❌ Event update error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       push(`Gagal memperbarui event: ${errorMessage}`, "error");

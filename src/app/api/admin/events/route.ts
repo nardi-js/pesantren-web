@@ -5,11 +5,7 @@ import Event from "@/models/Event";
 // GET /api/admin/events - Get all events with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Events GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Events GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -43,9 +39,6 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const total = await Event.countDocuments(filter);
-
-    console.log(`✅ Found ${events.length} events, total: ${total}`);
-
     return NextResponse.json({
       success: true,
       data: {
@@ -59,7 +52,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Get events error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch events" },
       { status: 500 }
@@ -70,15 +62,8 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/events - Create new event
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Events POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Events POST");
-
     const data = await request.json();
-    console.log("📋 Events POST data:", data);
-    console.log("🎬 YouTube URL received:", data.youtubeUrl);
-
     const event = new Event({
       title: data.title,
       slug: data.slug,
@@ -103,8 +88,6 @@ export async function POST(request: NextRequest) {
     });
 
     const savedEvent = await event.save();
-    console.log("✅ Event saved successfully:", savedEvent._id);
-
     return NextResponse.json(
       {
         success: true,
@@ -114,8 +97,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("❌ Create event error:", error);
-
     if (error instanceof Error && error.name === "ValidationError") {
       return NextResponse.json(
         {

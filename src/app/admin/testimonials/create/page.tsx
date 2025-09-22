@@ -72,7 +72,6 @@ export default function CreateTestimonialPage() {
         alert("Error: " + (result.error || "Failed to create testimonial"));
       }
     } catch (error) {
-      console.error("Error creating testimonial:", error);
       alert("Terjadi kesalahan saat membuat testimonial");
     } finally {
       setIsSubmitting(false);

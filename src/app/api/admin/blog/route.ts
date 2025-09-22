@@ -62,7 +62,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Get blogs error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch blogs" },
       { status: 500 }
@@ -73,20 +72,12 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/blog - Create new blog
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Blog POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Blog POST");
-
     const contentType = request.headers.get("content-type");
-    console.log("📋 Content-Type:", contentType);
-
     if (contentType?.includes("multipart/form-data")) {
       // Handle file upload
       const formData = await request.formData();
-      console.log("📁 FormData entries:");
       for (const [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value);
       }
 
       // Extract blog data
@@ -110,9 +101,6 @@ export async function POST(request: NextRequest) {
         },
         featuredImage: "", // Will be set after upload
       };
-
-      console.log("📋 Extracted blogData:", blogData);
-
       // Handle featured image upload
       const imageFile = formData.get("featuredImage") as File;
       if (imageFile && imageFile.size > 0) {
@@ -134,8 +122,6 @@ export async function POST(request: NextRequest) {
 
       const blog = new Blog(blogData);
       const savedBlog = await blog.save();
-      console.log("✅ Blog saved successfully:", savedBlog._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -147,11 +133,8 @@ export async function POST(request: NextRequest) {
     } else {
       // Handle JSON data
       const data = await request.json();
-      console.log("📋 JSON data received:", data);
-
       // Check if data is empty or missing required fields
       if (!data || Object.keys(data).length === 0) {
-        console.error("❌ Empty data received");
         return NextResponse.json(
           { success: false, error: "No data provided" },
           { status: 400 }
@@ -160,7 +143,6 @@ export async function POST(request: NextRequest) {
 
       // Validate required fields
       if (!data.title) {
-        console.error("❌ Missing required field: title");
         return NextResponse.json(
           { success: false, error: "Title is required" },
           { status: 400 }
@@ -197,13 +179,8 @@ export async function POST(request: NextRequest) {
           keywords: Array.isArray(data.seoKeywords) ? data.seoKeywords : [],
         };
       }
-
-      console.log("📋 Processed data for saving:", data);
-
       const blog = new Blog(data);
       const savedBlog = await blog.save();
-      console.log("✅ Blog saved successfully:", savedBlog._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -214,10 +191,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error: unknown) {
-    console.error("❌ Create blog error:", error);
-
     if (error instanceof Error && error.name === "ValidationError") {
-      console.error("❌ Validation errors:", error);
       return NextResponse.json(
         {
           success: false,

@@ -58,7 +58,6 @@ function EventListClient() {
         setTotalEvents(data.pagination.total);
       }
     } catch (error) {
-      console.error("Failed to fetch events:", error);
       push("Gagal memuat data events", "error");
     } finally {
       setLoading(false);
@@ -80,7 +79,6 @@ function EventListClient() {
         fetchEvents();
       }
     } catch (error) {
-      console.error("Failed to delete event:", error);
       push("Gagal menghapus event", "error");
     } finally {
       setDeleteOpen(false);
@@ -198,7 +196,6 @@ function EventListClient() {
             <button
               onClick={() => {
                 // TODO: Implement bulk delete
-                console.log("Bulk delete:", bulkSelected);
               }}
               className="btn-outline-red text-sm"
             >

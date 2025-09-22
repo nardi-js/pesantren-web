@@ -79,7 +79,6 @@ export default function EditGalleryPage() {
         setAlbumItems(data.items);
       }
     } catch (error) {
-      console.error("Error loading gallery data:", error);
       alert("Failed to load gallery data");
     } finally {
       setIsLoadingData(false);
@@ -155,7 +154,6 @@ export default function EditGalleryPage() {
       alert("Gallery updated successfully!");
       router.push("/admin/gallery");
     } catch (error) {
-      console.error("Error updating gallery:", error);
       alert("Failed to update gallery");
     } finally {
       setIsLoading(false);

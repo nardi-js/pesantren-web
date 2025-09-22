@@ -5,11 +5,7 @@ import Testimonial from "@/models/Testimonial";
 // GET /api/testimonials - Get published testimonials for public
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Public Testimonials GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Public Testimonials GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "9");
@@ -42,11 +38,6 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const total = await Testimonial.countDocuments(filter);
-
-    console.log(
-      `✅ Found ${testimonials.length} published testimonials, total: ${total}`
-    );
-
     return NextResponse.json({
       success: true,
       data: testimonials,
@@ -59,7 +50,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Error in Public Testimonials GET API:", error);
     return NextResponse.json(
       {
         success: false,

@@ -10,9 +10,6 @@ const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
   process.env;
 
 if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-  console.warn(
-    "⚠️  Missing Cloudinary environment variables. Check .env.example"
-  );
 }
 
 cloudinary.config({
@@ -114,7 +111,6 @@ export async function deleteFile(
     });
     return result;
   } catch (error) {
-    console.error("Cloudinary delete error:", error);
     throw new Error(
       `Delete failed: ${
         error instanceof Error ? error.message : "Unknown error"

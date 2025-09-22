@@ -5,10 +5,7 @@ import Gallery from "@/models/Gallery";
 // GET /api/gallery - Get published gallery items for public view
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Public Gallery GET API called");
     await connectDB();
-    console.log("✅ Database connected for Public Gallery GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
@@ -37,9 +34,6 @@ export async function GET(request: NextRequest) {
         { tags: { $in: [new RegExp(search, "i")] } },
       ];
     }
-
-    console.log("🔍 Filter:", filter);
-
     // Get total count
     const total = await Gallery.countDocuments(filter);
 
@@ -51,11 +45,6 @@ export async function GET(request: NextRequest) {
       .skip(skip)
       .limit(limit)
       .lean();
-
-    console.log(
-      `✅ Found ${galleryItems.length} gallery items, total: ${total}`
-    );
-
     return NextResponse.json({
       success: true,
       data: {
@@ -69,7 +58,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Get public gallery error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch gallery items" },
       { status: 500 }

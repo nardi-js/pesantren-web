@@ -36,9 +36,7 @@ export default function NewEventPage() {
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    console.log(`🔄 Field changed: ${field} = ${value}`);
     if (field === "youtubeUrl") {
-      console.log("🎬 YouTube URL updated:", value);
     }
     setFormData((prev) => ({
       ...prev,
@@ -63,22 +61,17 @@ export default function NewEventPage() {
     }
 
     setIsSubmitting(true);
-    console.log("🚀 Submitting event data:", formData);
-
     try {
       let imageUrl =
         formData.featuredImage || "https://via.placeholder.com/800x400";
 
       // Upload image to Cloudinary if selected
       if (selectedImage && !selectedImage.isUploaded) {
-        console.log("📤 Uploading selected image to Cloudinary...");
         const uploadResult = await uploadImageToCloudinary(selectedImage);
 
         if (uploadResult.success && uploadResult.url) {
           imageUrl = uploadResult.url;
-          console.log("✅ Image uploaded successfully:", imageUrl);
         } else {
-          console.error("❌ Image upload failed:", uploadResult.error);
           push(`Image upload failed: ${uploadResult.error}`, "error");
           setIsSubmitting(false);
           return;
@@ -116,12 +109,7 @@ export default function NewEventPage() {
         registrationOpen: true,
         registered: 0,
       };
-
-      console.log("📤 Sending to API:", submitData);
-
       const response = await AdminApi.createEvent(submitData);
-      console.log("📥 API Response:", response);
-
       if (response.success) {
         push("Event created successfully!", "success");
         router.push("/admin/events");
@@ -129,7 +117,6 @@ export default function NewEventPage() {
         throw new Error(response.error || "Failed to create event");
       }
     } catch (error) {
-      console.error("❌ Event submission error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       push(`Failed to create event: ${errorMessage}`, "error");
@@ -344,10 +331,6 @@ export default function NewEventPage() {
           <VideoEmbed
             value={formData.youtubeUrl}
             onChange={(url) => {
-              console.log(
-                "📋 Form: Received onChange from VideoEmbed with:",
-                url
-              );
               handleInputChange("youtubeUrl", url);
             }}
           />

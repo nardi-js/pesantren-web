@@ -5,14 +5,8 @@ import Testimonial from "@/models/Testimonial";
 // POST /api/testimonials/submit - Submit testimonial from public (requires approval)
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Public Testimonial Submit API called");
-
     await connectDB();
-    console.log("✅ Database connected for Public Testimonial Submit");
-
     const data = await request.json();
-    console.log("📋 Public Testimonial Submit data:", data);
-
     // Validate required fields
     if (!data.name || !data.content) {
       return NextResponse.json(
@@ -60,11 +54,6 @@ export async function POST(request: NextRequest) {
     });
 
     const savedTestimonial = await testimonial.save();
-    console.log(
-      "✅ Public testimonial submitted successfully:",
-      savedTestimonial._id
-    );
-
     return NextResponse.json(
       {
         success: true,
@@ -75,8 +64,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("❌ Submit public testimonial error:", error);
-
     if (error instanceof Error && error.name === "ValidationError") {
       const validationError = error as Error & { errors?: unknown };
       return NextResponse.json(

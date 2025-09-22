@@ -92,7 +92,6 @@ export async function authenticate(email: string, password: string) {
   try {
     await connectDB();
   } catch (e) {
-    console.error("Auth DB connect failed:", (e as Error).message);
     return null;
   }
   const user = await AdminUser.findOne({ email }).lean<
@@ -112,10 +111,6 @@ export async function ensureDefaultAdmin() {
   try {
     await connectDB();
   } catch (e) {
-    console.warn(
-      "Skipping default admin seed (DB unavailable):",
-      (e as Error).message
-    );
     return;
   }
   const existing = await AdminUser.findOne({ email }).lean();
@@ -127,7 +122,6 @@ export async function ensureDefaultAdmin() {
       name: "Administrator",
       role: "admin",
     });
-    console.log("Default admin created");
   }
 }
 
@@ -137,7 +131,6 @@ export async function getCurrentAdmin() {
   try {
     await connectDB();
   } catch (e) {
-    console.error("getCurrentAdmin DB connect failed:", (e as Error).message);
     return null;
   }
   const doc = await AdminUser.findById(session.id).lean<
