@@ -23,7 +23,7 @@ export default function NewGalleryPage() {
     caption: "",
     altText: "",
     coverImage: "",
-    items: [] as Array<{ url: string; caption: string; }>,
+    items: [] as Array<{ url: string; caption: string }>,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +49,7 @@ export default function NewGalleryPage() {
       submitData.append("category", formData.category);
       submitData.append("status", formData.status);
       submitData.append("featured", formData.featured.toString());
-      
+
       if (formData.coverImage) {
         submitData.append("coverImage", formData.coverImage);
       }
@@ -235,7 +235,9 @@ export default function NewGalleryPage() {
             Upload a cover image for this gallery item
           </p>
           <ImageUploader
-            onUpload={(imageUrl) => setFormData(prev => ({ ...prev, coverImage: imageUrl }))}
+            onUpload={(imageUrl) =>
+              setFormData((prev) => ({ ...prev, coverImage: imageUrl }))
+            }
           />
         </div>
 
@@ -295,9 +297,9 @@ export default function NewGalleryPage() {
             <div className="space-y-4">
               <ImageUploader
                 onUpload={(imageUrl) => {
-                  setFormData(prev => ({
+                  setFormData((prev) => ({
                     ...prev,
-                    items: [...prev.items, { url: imageUrl, caption: "" }]
+                    items: [...prev.items, { url: imageUrl, caption: "" }],
                   }));
                 }}
               />
