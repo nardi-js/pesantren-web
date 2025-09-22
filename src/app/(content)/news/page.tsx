@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function NewsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50/50 to-white dark:from-slate-900 dark:to-slate-800">
+    <div className="flex flex-col islamic-pattern">
       <Hero />
       <NewsClient />
     </div>
@@ -20,39 +20,17 @@ export default function NewsPage() {
 
 function Hero() {
   return (
-    <section className="relative py-20 lg:py-32 overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-r from-sky-600 to-emerald-600" />
-      <div className="absolute inset-0 bg-white/5 bg-opacity-10">
-        <div className="w-full h-full opacity-20 bg-gradient-to-br from-transparent via-white/10 to-transparent" />
-      </div>
+    <section className="relative w-full h-[400px] md:h-[480px] overflow-hidden flex items-center justify-center bg-gradient-to-br from-sky-100 via-sky-200 to-emerald-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+      {/* Islamic Pattern Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-sky-500/10 to-emerald-500/10 dark:from-emerald-400/5 dark:via-sky-400/5 dark:to-emerald-400/5" />
 
-      <div className="relative z-10 container mx-auto px-4">
-        <div className="text-center text-white">
-          <h1 className="text-4xl lg:text-6xl font-bold mb-6 animate-fade-up">
-            Berita & Artikel
-          </h1>
-          <p className="text-xl lg:text-2xl text-sky-100 max-w-3xl mx-auto leading-relaxed animate-fade-up animation-delay-100">
-            Tetap terhubung dengan berita terbaru dan artikel inspiratif dari
-            dunia pendidikan Islam
-          </p>
-
-          {/* Stats */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto animate-fade-up animation-delay-200">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-sky-200">100+</div>
-              <div className="text-sky-100">Artikel</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-sky-200">50+</div>
-              <div className="text-sky-100">Kategori</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-sky-200">1000+</div>
-              <div className="text-sky-100">Pembaca</div>
-            </div>
-          </div>
-        </div>
+      <div className="relative z-10 text-center px-6 max-w-4xl space-y-6 mt-20">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-600 dark:from-emerald-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent animate-fade-up">
+          Berita & Artikel
+        </h1>
+        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-medium animate-fade-up animation-delay-100 leading-relaxed">
+          Tetap terhubung dengan berita terbaru dan artikel inspiratif dari dunia pendidikan Islam
+        </p>
       </div>
     </section>
   );

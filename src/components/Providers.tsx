@@ -10,13 +10,14 @@ interface Props {
 function useThemeInit() {
   useEffect(() => {
     const stored = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    const theme = stored || (prefersDark ? "dark" : "light");
+    const theme = stored || "dark"; // Default to dark theme
     const root = document.documentElement;
-    if (theme === "dark") root.classList.add("dark");
-    else root.classList.remove("dark");
+    if (theme === "light") root.classList.add("light");
+    else root.classList.remove("light");
+    // Ensure localStorage is set
+    if (!stored) {
+      localStorage.setItem("theme", "dark");
+    }
   }, []);
 }
 

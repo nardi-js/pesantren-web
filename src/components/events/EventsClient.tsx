@@ -105,6 +105,7 @@ export default function EventsClient() {
           onChange={change}
           onResetAll={() => setFilters(initialFilters)}
         />
+
         {nextUpcoming && <UpcomingHighlight item={nextUpcoming} />}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {loading ? (

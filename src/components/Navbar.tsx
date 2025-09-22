@@ -9,16 +9,13 @@ import Image from "next/image";
 // Simple theme toggle component inline
 function ThemeToggle({ scrolled = false }: { scrolled?: boolean }) {
   const [mounted, setMounted] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
       const savedTheme =
-        (localStorage.getItem("theme") as "light" | "dark") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light");
+        (localStorage.getItem("theme") as "light" | "dark") || "dark";
       setTheme(savedTheme);
     }
   }, []);
@@ -26,8 +23,8 @@ function ThemeToggle({ scrolled = false }: { scrolled?: boolean }) {
   useEffect(() => {
     if (!mounted) return;
     const root = document.documentElement;
-    if (theme === "dark") root.classList.add("dark");
-    else root.classList.remove("dark");
+    if (theme === "light") root.classList.add("light");
+    else root.classList.remove("light");
     localStorage.setItem("theme", theme);
   }, [theme, mounted]);
 
@@ -37,7 +34,7 @@ function ThemeToggle({ scrolled = false }: { scrolled?: boolean }) {
         className={cn(
           "h-10 w-10 rounded-xl border transition-all duration-300",
           scrolled
-            ? "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            ? "bg-[hsl(var(--surface-alt))] border-[hsl(var(--border))]"
             : "bg-white/20 border-white/30 backdrop-blur-sm"
         )}
       />
@@ -52,7 +49,7 @@ function ThemeToggle({ scrolled = false }: { scrolled?: boolean }) {
       className={cn(
         "h-10 w-10 inline-flex items-center justify-center rounded-xl border focus:outline-none focus:ring-2 focus:ring-sky-500/50 transition-all duration-200 group",
         scrolled
-          ? "bg-gray-100 hover:bg-sky-100 dark:bg-gray-800 dark:hover:bg-sky-900/20 border-gray-200 dark:border-gray-700 hover:border-sky-300 dark:hover:border-sky-600"
+          ? "bg-[hsl(var(--surface-alt))] hover:bg-sky-100 border-[hsl(var(--border))] hover:border-sky-300"
           : "bg-white/20 hover:bg-white/30 border-white/30 hover:border-white/50 backdrop-blur-sm"
       )}
     >
@@ -122,7 +119,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700"
+          ? "bg-[hsl(var(--surface))] shadow-lg border-b border-[hsl(var(--border))]"
           : "bg-transparent"
       )}
     >
@@ -147,7 +144,7 @@ export function Navbar() {
                 className={cn(
                   "font-bold text-xl transition-colors duration-300",
                   scrolled
-                    ? "text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400"
+                    ? "text-[hsl(var(--foreground))] group-hover:text-emerald-600"
                     : "text-white group-hover:text-emerald-200"
                 )}
               >
@@ -157,7 +154,7 @@ export function Navbar() {
                 className={cn(
                   "text-xs font-medium -mt-1 transition-colors duration-300",
                   scrolled
-                    ? "text-gray-500 dark:text-gray-400"
+                    ? "text-[hsl(var(--foreground-soft))]"
                     : "text-white/80"
                 )}
               >
@@ -177,15 +174,15 @@ export function Navbar() {
                     "px-4 py-3 rounded-xl transition-all duration-200 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 relative overflow-hidden",
                     active
                       ? scrolled
-                        ? "text-emerald-700 dark:text-emerald-300 bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30 shadow-sm border border-emerald-100 dark:border-emerald-700/30"
+                        ? "text-emerald-600 bg-gradient-to-r from-emerald-50 to-sky-50 shadow-sm border border-emerald-100"
                         : "text-white bg-white/20 backdrop-blur-sm border border-white/30"
                       : scrolled
-                      ? "text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-sky-50/50 dark:hover:from-emerald-900/20 dark:hover:to-sky-900/20"
+                      ? "text-[hsl(var(--foreground))] hover:text-emerald-600 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-sky-50/50"
                       : "text-white/80 hover:text-white hover:bg-white/10 backdrop-blur-sm"
                   )}
                 >
                   {active && scrolled && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-emerald-500 to-sky-500 dark:from-emerald-400 dark:to-sky-400 rounded-full"></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full"></div>
                   )}
                   {active && !scrolled && (
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-white rounded-full"></div>
@@ -200,7 +197,7 @@ export function Navbar() {
           <ThemeToggle scrolled={scrolled} />
           <Link
             href="/donate"
-            className="hidden sm:inline-flex px-8 py-3 bg-gradient-to-r from-emerald-500 to-sky-600 hover:from-emerald-600 hover:to-sky-700 dark:from-emerald-400 dark:to-sky-500 dark:hover:from-emerald-500 dark:hover:to-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+            className="hidden sm:inline-flex px-8 py-3 bg-gradient-to-r from-emerald-500 to-sky-600 hover:from-emerald-600 hover:to-sky-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -219,7 +216,7 @@ export function Navbar() {
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-label="Toggle menu"
-            className="inline-flex lg:hidden h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] hover:border-sky-400/60 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/60 dark:bg-[hsl(var(--surface-alt))] dark:hover:bg-sky-900/40 transition-colors"
+            className="inline-flex lg:hidden h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] hover:border-sky-400/60 hover:text-sky-600 hover:bg-sky-50/60 transition-colors"
           >
             <span className="sr-only">Menu</span>
             <div className="relative h-5 w-5">
@@ -252,17 +249,17 @@ export function Navbar() {
         aria-label="Mobile navigation"
         className={cn(
           "lg:hidden fixed inset-y-0 right-0 w-80 max-w-full z-50 transform transition-transform duration-300 will-change-transform shadow-2xl",
-          "bg-white dark:bg-slate-900 border-l border-gray-200 dark:border-gray-700",
+          "bg-[hsl(var(--surface))] border-l border-[hsl(var(--border))]",
           open ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
-          <span className="font-bold text-lg text-gray-900 dark:text-white">
+        <div className="flex h-16 items-center justify-between px-6 border-b border-[hsl(var(--border))]">
+          <span className="font-bold text-lg text-[hsl(var(--foreground))]">
             Menu
           </span>
           <button
             onClick={() => setOpen(false)}
-            className="h-10 w-10 inline-flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="h-10 w-10 inline-flex items-center justify-center rounded-lg hover:bg-[hsl(var(--surface-alt))] transition-colors"
             aria-label="Close menu"
           >
             <svg
@@ -289,16 +286,16 @@ export function Navbar() {
                 className={cn(
                   "px-4 py-3 rounded-lg text-base font-medium transition-all duration-200",
                   active
-                    ? "text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900"
-                    : "text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "text-sky-600 bg-sky-100"
+                    : "text-[hsl(var(--foreground-soft))] hover:text-sky-600 hover:bg-[hsl(var(--surface-alt))]"
                 )}
               >
                 {item.label}
               </Link>
             );
           })}
-          <div className="px-4 pt-6 border-t border-gray-200 dark:border-gray-700 mt-4">
-            <p className="text-xs uppercase tracking-wide font-bold text-gray-500 dark:text-gray-400 mb-3">
+          <div className="px-4 pt-6 border-t border-[hsl(var(--border))] mt-4">
+            <p className="text-xs uppercase tracking-wide font-bold text-[hsl(var(--foreground-muted))] mb-3">
               Settings
             </p>
             <ThemeToggle />

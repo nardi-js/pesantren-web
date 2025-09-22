@@ -22,6 +22,8 @@ export default function NewGalleryPage() {
     youtubeUrl: "",
     caption: "",
     altText: "",
+    coverImage: "",
+    items: [] as Array<{ url: string; caption: string; }>,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +49,10 @@ export default function NewGalleryPage() {
       submitData.append("category", formData.category);
       submitData.append("status", formData.status);
       submitData.append("featured", formData.featured.toString());
+      
+      if (formData.coverImage) {
+        submitData.append("coverImage", formData.coverImage);
+      }
 
       if (formData.type === "video") {
         submitData.append("youtubeUrl", formData.youtubeUrl);
@@ -66,8 +72,7 @@ export default function NewGalleryPage() {
       } else {
         push(response.error || "Failed to create gallery item", "error");
       }
-    } catch (error) {
-      console.error("Submit error:", error);
+    } catch {
       push("Failed to create gallery item", "error");
     } finally {
       setIsSubmitting(false);
@@ -230,7 +235,7 @@ export default function NewGalleryPage() {
             Upload a cover image for this gallery item
           </p>
           <ImageUploader
-            onUpload={(imageUrl) => console.log("Cover uploaded:", imageUrl)}
+            onUpload={(imageUrl) => setFormData(prev => ({ ...prev, coverImage: imageUrl }))}
           />
         </div>
 
@@ -289,9 +294,12 @@ export default function NewGalleryPage() {
 
             <div className="space-y-4">
               <ImageUploader
-                onUpload={(imageUrl) =>
-                  console.log("Image uploaded:", imageUrl)
-                }
+                onUpload={(imageUrl) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    items: [...prev.items, { url: imageUrl, caption: "" }]
+                  }));
+                }}
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

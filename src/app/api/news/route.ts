@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         categories,
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }

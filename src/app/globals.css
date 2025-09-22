@@ -2,8 +2,9 @@
 @import "tailwindcss";
 /* (Legacy mapping) Equivalent to: @tailwind base; @tailwind components; @tailwind utilities; */
 
-/* ===== Design System v2 (Light Theme) ===== */
-:root {
+/* ===== Design System v2 (Dark Theme as Default) ===== */
+:root,
+html {
   /* Brand (bright sky) */
   --brand-50: 204 100% 97%;
   --brand-100: 203 100% 93%;
@@ -16,35 +17,44 @@
   --brand-800: 203 90% 27%;
   --brand-900: 206 75% 21%;
 
-  /* Semantic core surfaces */
-  --background: 0 0% 100%;
-  --surface: 0 0% 100%; /* base surface */
-  --surface-alt: 210 40% 97%; /* subtle alternate (soft gray-blue) */
-  --surface-muted: 210 40% 96%;
-  --surface-inverse: 222 47% 11%;
-  --elevated: 0 0% 100%;
-  --overlay: 210 40% 4%;
+  /* Semantic core surfaces - DARK DEFAULT */
+  --background: 222 47% 10%;
+  --surface: 222 47% 11%;
+  --surface-alt: 220 40% 17%;
+  --surface-muted: 220 35% 21%;
+  --surface-inverse: 0 0% 100%;
+  --elevated: 222 47% 16%;
+  --overlay: 210 40% 2%;
 
-  /* Text colors */
-  --foreground: 222 47% 11%;
-  --foreground-soft: 215 16% 47%;
-  --foreground-muted: 215 20% 65%;
-  --foreground-on-dark: 210 40% 98%;
+  /* Text colors - DARK DEFAULT */
+  --foreground: 210 40% 96%;
+  --foreground-soft: 215 16% 72%;
+  --foreground-muted: 215 16% 55%;
+  --foreground-on-dark: 222 47% 11%;
 
-  /* Borders & lines */
-  --border: 214 32% 91%;
-  --border-strong: 215 28% 80%;
-  --divider: 214 32% 91%;
+  /* Borders & lines - DARK DEFAULT */
+  --border: 220 40% 25%;
+  --border-strong: 220 40% 35%;
+  --divider: 220 40% 25%;
 
-  /* Interactive tokens */
-  --primary: var(--brand-500);
-  --primary-hover: var(--brand-600);
-  --primary-active: var(--brand-700);
-  --primary-foreground: 0 0% 100%;
+  /* Interactive tokens - DARK DEFAULT */
+  --primary: var(--brand-400);
+  --primary-hover: var(--brand-300);
+  --primary-active: var(--brand-200);
+  --primary-foreground: 222 47% 11%;
   --secondary: 160 84% 39%;
   --secondary-hover: 160 84% 35%;
   --secondary-foreground: 0 0% 100%;
   --focus-ring: var(--brand-400);
+
+  /* Utility colors - DARK DEFAULT */
+  --muted: 220 40% 20%;
+  --muted-foreground: 215 16% 55%;
+  --accent: 220 35% 21%;
+  --accent-foreground: 210 40% 96%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-border: 0 84% 45%;
 
   /* Radii & shadows */
   --radius-sm: 0.5rem;
@@ -58,33 +68,42 @@
     0 4px 6px -2px hsl(215 28% 17% / 0.05);
 }
 
-/* ===== Dark Theme ===== */
-.dark {
-  --background: 222 47% 10%;
-  --surface: 222 47% 11%;
-  --surface-alt: 220 40% 17%;
-  --surface-muted: 220 35% 21%;
-  --surface-inverse: 0 0% 100%;
-  --elevated: 222 47% 16%;
-  --overlay: 210 40% 2%;
+/* ===== Light Theme Override ===== */
+.light {
+  --background: 0 0% 100%;
+  --surface: 0 0% 100%; /* base surface */
+  --surface-alt: 210 40% 97%; /* subtle alternate (soft gray-blue) */
+  --surface-muted: 210 40% 96%;
+  --surface-inverse: 222 47% 11%;
+  --elevated: 0 0% 100%;
+  --overlay: 210 40% 4%;
 
-  --foreground: 210 40% 96%;
-  --foreground-soft: 215 16% 72%;
-  --foreground-muted: 215 16% 55%;
-  --foreground-on-dark: 222 47% 11%;
+  --foreground: 222 47% 11%;
+  --foreground-soft: 215 16% 47%;
+  --foreground-muted: 215 20% 65%;
+  --foreground-on-dark: 210 40% 98%;
 
-  --border: 220 40% 25%;
-  --border-strong: 220 40% 35%;
-  --divider: 220 40% 25%;
+  --border: 214 32% 91%;
+  --border-strong: 215 28% 80%;
+  --divider: 214 32% 91%;
 
-  --primary: var(--brand-400);
-  --primary-hover: var(--brand-300);
-  --primary-active: var(--brand-200);
-  --primary-foreground: 222 47% 11%;
-  --secondary: 160 84% 45%;
-  --secondary-hover: 160 84% 50%;
-  --secondary-foreground: 222 47% 11%;
-  --focus-ring: var(--brand-300);
+  --primary: var(--brand-500);
+  --primary-hover: var(--brand-600);
+  --primary-active: var(--brand-700);
+  --primary-foreground: 0 0% 100%;
+  --secondary: 160 84% 39%;
+  --secondary-hover: 160 84% 35%;
+  --secondary-foreground: 0 0% 100%;
+  --focus-ring: var(--brand-400);
+
+  /* Utility colors - LIGHT OVERRIDE */
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 210 40% 95%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-border: 0 84% 45%;
 }
 
 /* Expose token variables as CSS custom properties without Tailwind @theme */
@@ -108,13 +127,21 @@
 }
 
 body {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
   font-family: var(--font-sans), system-ui, sans-serif;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Force dark theme as default */
+html:not(.light) {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
 }
 
 /* Modern button and interactive element base */
@@ -142,7 +169,7 @@ body {
   background: hsl(var(--surface));
   color: hsl(var(--foreground));
 }
-.dark .btn-outline {
+:not(.light) .btn-outline {
   border-color: hsl(var(--border));
   background: hsl(var(--surface));
 }
@@ -167,10 +194,8 @@ body {
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
-  transition: background-color 0.3s ease, border-color 0.3s ease,
-    box-shadow 0.3s ease, color 0.3s ease;
 }
-.dark .surface-card {
+:not(.light) .surface-card {
   background: hsl(var(--surface));
   border-color: hsl(var(--border));
 }
@@ -183,13 +208,8 @@ body {
   border-color: hsl(var(--primary));
 }
 
-/* Enhanced Theme Transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke,
-    box-shadow;
-  transition-duration: 0.3s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Enhanced Theme Transitions - Removed for instant theme switching */
+/* Universal transitions disabled to allow instant theme changes */
 
 /* Islamic Patterns & Animations */
 .islamic-pattern {
@@ -217,7 +237,7 @@ body {
   z-index: -1;
   transition: opacity 0.3s ease;
 }
-.dark .islamic-pattern::before {
+:not(.light) .islamic-pattern::before {
   background-image: radial-gradient(
       circle at 25% 25%,
       rgba(16, 185, 129, 0.05) 0%,
@@ -266,10 +286,10 @@ body {
 .text-muted {
   color: hsl(var(--foreground-muted));
 }
-.dark .text-soft {
+:not(.light) .text-soft {
   color: hsl(var(--foreground-soft));
 }
-.dark .text-muted {
+:not(.light) .text-muted {
   color: hsl(var(--foreground-muted));
 }
 
@@ -507,6 +527,105 @@ body {
 :focus-visible {
   outline: 2px solid hsl(var(--focus-ring));
   outline-offset: 2px;
+}
+
+/* Hero Section - Always Dark Theme */
+.hero-always-dark {
+  /* Force dark theme variables regardless of global theme */
+  --hero-bg: 222 47% 10%;
+  --hero-surface: 222 47% 11%;
+  --hero-text: 210 40% 96%;
+  --hero-text-muted: 210 40% 80%;
+  --hero-overlay: 0 0% 0%;
+
+  /* Apply dark styling */
+  background-color: hsl(var(--hero-bg)) !important;
+  color: hsl(var(--hero-text)) !important;
+}
+
+.hero-always-dark * {
+  /* Force all child elements to use dark theme colors */
+  color: hsl(var(--hero-text)) !important;
+}
+
+.hero-always-dark .text-white {
+  /* Ensure white text stays white */
+  color: white !important;
+}
+
+.hero-always-dark .text-white\/80 {
+  /* Ensure white/80 text stays white/80 */
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.hero-always-dark .text-white\/60 {
+  /* Ensure white/60 text stays white/60 */
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.hero-always-dark .text-white\/30 {
+  /* Ensure white/30 text stays white/30 */
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.hero-always-dark .border-white\/30 {
+  /* Ensure white/30 borders stay white/30 */
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.hero-always-dark .border-white\/40 {
+  /* Ensure white/40 borders stay white/40 */
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.hero-always-dark .border-white\/70 {
+  /* Ensure white/70 borders stay white/70 */
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.hero-always-dark .bg-white\/10 {
+  /* Ensure white/10 backgrounds stay white/10 */
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.hero-always-dark .bg-white\/20 {
+  /* Ensure white/20 backgrounds stay white/20 */
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.hero-always-dark .bg-white\/70 {
+  /* Ensure white/70 backgrounds stay white/70 */
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Hero buttons - always use dark theme styling */
+.hero-always-dark .hero-btn-primary {
+  background: linear-gradient(
+    to right,
+    hsl(var(--brand-500)),
+    hsl(var(--brand-600))
+  ) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.hero-always-dark .hero-btn-primary:hover {
+  background: linear-gradient(
+    to right,
+    hsl(var(--brand-600)),
+    hsl(var(--brand-700))
+  ) !important;
+}
+
+.hero-always-dark .hero-btn-outline {
+  background: transparent !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.hero-always-dark .hero-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Scroll behavior */

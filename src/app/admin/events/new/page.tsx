@@ -32,7 +32,7 @@ export default function NewEventPage() {
     registrationLink: "",
     registrationOpen: true,
     organizer: "Admin",
-    status: "draft",
+    status: "published", // Changed from "draft" to "published" by default
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {

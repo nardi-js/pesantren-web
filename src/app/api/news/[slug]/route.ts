@@ -63,7 +63,7 @@ export async function GET(
         relatedNews,
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }

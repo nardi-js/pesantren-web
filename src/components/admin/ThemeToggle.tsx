@@ -2,28 +2,30 @@
 import { useEffect, useState } from "react";
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
-  const [dark, setDark] = useState(false);
+  const [light, setLight] = useState(false);
   useEffect(() => {
     const root = document.documentElement;
     const stored = localStorage.getItem("theme");
-    if (
-      stored === "dark" ||
-      (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      root.classList.add("dark");
-      setDark(true);
+    if (stored === "light") {
+      root.classList.add("light");
+      setLight(true);
+    } else {
+      // Default to dark theme
+      root.classList.remove("light");
+      setLight(false);
+      localStorage.setItem("theme", "dark");
     }
   }, []);
   const toggle = () => {
     const root = document.documentElement;
-    if (root.classList.contains("dark")) {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-      setDark(false);
-    } else {
-      root.classList.add("dark");
+    if (root.classList.contains("light")) {
+      root.classList.remove("light");
       localStorage.setItem("theme", "dark");
-      setDark(true);
+      setLight(false);
+    } else {
+      root.classList.add("light");
+      localStorage.setItem("theme", "light");
+      setLight(true);
     }
   };
   return (
@@ -35,13 +37,13 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       <span className="relative flex h-3 w-3">
         <span
           className={`absolute inset-0 rounded-full transition-all ${
-            dark
-              ? "bg-sky-400 scale-100 opacity-100"
-              : "bg-slate-400 scale-75 opacity-80"
+            light
+              ? "bg-slate-400 scale-75 opacity-80"
+              : "bg-sky-400 scale-100 opacity-100"
           }`}
         ></span>
       </span>
-      {dark ? "Dark" : "Light"}
+      {light ? "Light" : "Dark"}
     </button>
   );
 }

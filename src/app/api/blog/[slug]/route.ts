@@ -30,7 +30,7 @@ export async function GET(
       success: true,
       data: blog,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch blog" },
       { status: 500 }

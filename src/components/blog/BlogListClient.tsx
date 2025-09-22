@@ -54,8 +54,8 @@ export default function BlogListClient() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-xl p-6 max-w-md mx-auto">
-          <p className="text-red-600 dark:text-red-400 font-medium">
+        <div className="bg-[hsl(var(--destructive))] border border-[hsl(var(--destructive-border))] rounded-xl p-6 max-w-md mx-auto">
+          <p className="text-[hsl(var(--destructive-foreground))] font-medium">
             Gagal memuat artikel: {error}
           </p>
           <button
@@ -83,12 +83,12 @@ export default function BlogListClient() {
               className={cn(
                 "px-8 py-4 rounded-2xl text-sm font-bold border transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:opacity-50 relative overflow-hidden",
                 active
-                  ? "bg-gradient-to-r from-emerald-500 to-sky-600 dark:from-emerald-400 dark:to-sky-500 text-white border-transparent shadow-lg hover:shadow-xl transform hover:scale-105"
-                  : "bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-500 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:shadow-md transition-colors duration-300"
+                  ? "bg-gradient-to-r from-emerald-500 to-sky-600 text-white border-transparent shadow-lg hover:shadow-xl transform hover:scale-105"
+                  : "bg-[hsl(var(--surface))] border-[hsl(var(--border))] hover:border-emerald-300 text-[hsl(var(--muted-foreground))] hover:text-emerald-600 hover:bg-[hsl(var(--accent))] hover:shadow-md transition-colors duration-300"
               )}
             >
               {active && (
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-sky-700 dark:from-emerald-500 dark:to-sky-600 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-sky-700 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
               )}
               <span className="relative z-10">{cat}</span>
             </button>
@@ -98,7 +98,7 @@ export default function BlogListClient() {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
           {[...Array(10)].map((_, i) => (
             <BlogCardSkeleton key={i} />
           ))}
@@ -107,7 +107,7 @@ export default function BlogListClient() {
 
       {/* Blog Grid */}
       {!isLoading && blogs.length > 0 && (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
           {blogs.map((post, i) => (
             <BlogCard key={post._id} post={post} index={i} />
           ))}
@@ -117,7 +117,7 @@ export default function BlogListClient() {
       {/* Empty State */}
       {!isLoading && blogs.length === 0 && (
         <div className="text-center py-12">
-          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-8 max-w-md mx-auto">
+          <div className="bg-[hsl(var(--muted))] rounded-2xl p-8 max-w-md mx-auto">
             <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-sky-400 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
                 className="w-8 h-8 text-white"
@@ -133,10 +133,10 @@ export default function BlogListClient() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-2">
               Belum Ada Artikel
             </h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[hsl(var(--muted-foreground))]">
               {selectedCategory === "Semua"
                 ? "Belum ada artikel yang dipublikasikan."
                 : `Belum ada artikel dalam kategori "${selectedCategory}".`}
@@ -151,7 +151,7 @@ export default function BlogListClient() {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm font-medium text-[hsl(var(--muted-foreground))] hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             ← Sebelumnya
           </button>
@@ -167,7 +167,7 @@ export default function BlogListClient() {
                     "w-10 h-10 text-sm font-medium rounded-lg transition-all",
                     page === currentPage
                       ? "bg-gradient-to-r from-emerald-600 to-sky-500 text-white shadow-lg"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-600 dark:hover:text-emerald-400"
+                      : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--accent))] hover:text-emerald-600"
                   )}
                 >
                   {page}
@@ -181,7 +181,7 @@ export default function BlogListClient() {
               setCurrentPage((prev) => Math.min(totalPages, prev + 1))
             }
             disabled={currentPage === totalPages}
-            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm font-medium text-[hsl(var(--muted-foreground))] hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Selanjutnya →
           </button>
@@ -197,11 +197,11 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
   return (
     <article
       className={cn(
-        "group rounded-xl overflow-hidden bg-white dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200/60 dark:border-gray-700/60 shadow-md hover:shadow-lg dark:hover:shadow-emerald-500/10 transition-all duration-500 flex flex-col animate-fade-up hover:-translate-y-1",
+        "group rounded-xl overflow-hidden bg-[hsl(var(--surface))] border border-[hsl(var(--border))] shadow-md hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-500 flex flex-col animate-fade-up hover:-translate-y-1",
         `animation-delay-${Math.min(index * 100, 500)}`
       )}
     >
-      <div className="relative aspect-[16/11] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+      <div className="relative aspect-[16/11] overflow-hidden bg-[hsl(var(--muted))]">
         <Image
           src={
             post.featuredImage ||
@@ -215,14 +215,14 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
 
         {/* Category Badge - Islamic Style */}
         <div className="absolute top-4 left-4">
-          <span className="px-4 py-2 bg-gradient-to-r from-emerald-500/90 to-sky-500/90 backdrop-blur-sm text-xs font-bold text-white rounded-full border border-white/20 shadow-lg">
+          <span className="px-4 py-2 bg-gradient-to-r from-emerald-500/95 to-sky-500/95 text-xs font-bold text-white rounded-full border border-white/30 shadow-lg">
             {post.category}
           </span>
         </div>
 
         {/* Views Badge */}
         <div className="absolute top-4 right-4">
-          <div className="flex items-center gap-1 px-3 py-1.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-300 text-xs rounded-full border border-white/20 dark:border-gray-600/50 shadow-sm">
+          <div className="flex items-center gap-1 px-3 py-1.5 bg-[hsl(var(--surface))]/90 text-[hsl(var(--muted-foreground))] text-xs rounded-full border border-[hsl(var(--border))] shadow-sm">
             <svg
               className="w-3 h-3"
               fill="none"
@@ -249,22 +249,22 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
 
       <div className="p-4 flex flex-col gap-3 flex-1">
         <div className="space-y-3">
-          <h3 className="text-xl font-bold leading-tight text-gray-900 dark:text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-sky-500 dark:group-hover:from-emerald-400 dark:group-hover:to-sky-400 transition-all duration-300">
+          <h3 className="text-xl font-bold leading-tight text-[hsl(var(--foreground))] ">
             <Link href={`/blog/${post.slug}`} className="block">
               {post.title}
             </Link>
           </h3>
 
-          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-gradient-to-br from-emerald-500 to-sky-500 dark:from-emerald-400 dark:to-sky-400 rounded-full flex items-center justify-center shadow-sm">
+              <div className="w-6 h-6 bg-gradient-to-br from-emerald-500 to-sky-500 rounded-full flex items-center justify-center shadow-sm">
                 <span className="text-white text-xs font-bold">
                   {post.author.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               <span className="font-medium">{post.author.name}</span>
             </div>
-            <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+            <span className="w-1 h-1 rounded-full bg-[hsl(var(--border))]" />
             <time dateTime={post.publishedAt} className="font-medium">
               {publishedDate.toLocaleDateString("id-ID", {
                 day: "2-digit",
@@ -274,7 +274,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
             </time>
           </div>
 
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
+          <p className="text-sm text-[hsl(var(--muted-foreground))] line-clamp-3 leading-relaxed">
             {post.excerpt}
           </p>
         </div>
@@ -284,7 +284,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
             {post.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-1 rounded-md bg-gradient-to-r from-emerald-50 to-sky-50 dark:from-emerald-900/30 dark:to-sky-900/30 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60"
+                className="px-2 py-1 rounded-md bg-[hsl(var(--accent))] text-xs font-medium text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]"
               >
                 #{tag}
               </span>
@@ -293,7 +293,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
 
           <Link
             href={`/blog/${post.slug}`}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-sky-500 hover:from-emerald-700 hover:to-sky-600 dark:from-emerald-500 dark:to-sky-400 dark:hover:from-emerald-600 dark:hover:to-sky-500 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 group-hover:scale-105"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-sky-500 hover:from-emerald-700 hover:to-sky-600 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 group-hover:scale-105"
           >
             Baca
             <svg
@@ -318,29 +318,29 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
 
 function BlogCardSkeleton() {
   return (
-    <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-800/50 border border-gray-200/60 dark:border-gray-700/60 shadow-lg animate-pulse">
-      <div className="aspect-[16/10] bg-gray-200 dark:bg-gray-700" />
+    <div className="rounded-2xl overflow-hidden bg-[hsl(var(--surface))] border border-[hsl(var(--border))] shadow-lg animate-pulse">
+      <div className="aspect-[16/10] bg-[hsl(var(--muted))]" />
       <div className="p-6 space-y-4">
         <div className="space-y-3">
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+          <div className="h-6 bg-[hsl(var(--muted))] rounded-lg" />
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full" />
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-24" />
-            <div className="w-1 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20" />
+            <div className="w-6 h-6 bg-[hsl(var(--muted))] rounded-full" />
+            <div className="h-3 bg-[hsl(var(--muted))] rounded w-24" />
+            <div className="w-1 h-1 bg-[hsl(var(--muted))] rounded-full" />
+            <div className="h-3 bg-[hsl(var(--muted))] rounded w-20" />
           </div>
           <div className="space-y-2">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded" />
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+            <div className="h-4 bg-[hsl(var(--muted))] rounded" />
+            <div className="h-4 bg-[hsl(var(--muted))] rounded w-3/4" />
+            <div className="h-4 bg-[hsl(var(--muted))] rounded w-1/2" />
           </div>
         </div>
         <div className="flex items-center justify-between pt-4">
           <div className="flex gap-2">
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-md w-12" />
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-md w-16" />
+            <div className="h-6 bg-[hsl(var(--muted))] rounded-md w-12" />
+            <div className="h-6 bg-[hsl(var(--muted))] rounded-md w-16" />
           </div>
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-16" />
+          <div className="h-8 bg-[hsl(var(--muted))] rounded-full w-16" />
         </div>
       </div>
     </div>
