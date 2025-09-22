@@ -89,7 +89,7 @@ export default async function EventDetailPage({
 }: EventDetailPageProps) {
   const resolvedParams = await params;
   const event = await getEvent(resolvedParams.slug);
-  
+
   if (!event) {
     notFound();
   }
