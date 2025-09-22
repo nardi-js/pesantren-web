@@ -9,7 +9,7 @@ export interface ITestimonial extends Document {
   category: string;
   status: "pending" | "approved" | "rejected";
   featured: boolean;
-  source: "form" | "admin" | "import";
+  source: "form" | "admin" | "import" | "public";
   email?: string;
   phone?: string;
   location?: string;
@@ -47,7 +47,18 @@ const TestimonialSchema = new Schema<ITestimonial>(
     category: {
       type: String,
       required: [true, "Category is required"],
-      enum: ["Student", "Parent", "Alumni", "Teacher", "Community", "General"],
+      enum: [
+        "General",
+        "Academic",
+        "Spiritual",
+        "Facility",
+        "Service",
+        "Student",
+        "Parent",
+        "Alumni",
+        "Teacher",
+        "Community",
+      ],
     },
     status: {
       type: String,
@@ -60,7 +71,7 @@ const TestimonialSchema = new Schema<ITestimonial>(
     },
     source: {
       type: String,
-      enum: ["form", "admin", "import"],
+      enum: ["form", "admin", "import", "public"],
       default: "form",
     },
     email: {

@@ -3,11 +3,15 @@ import { createContext, useContext, useState, useCallback } from "react";
 
 interface ToastItem {
   id: number;
-  message: string;
+  title?: string;
+  description?: string;
+  message?: string;
   type?: "info" | "success" | "error";
+  variant?: "info" | "success" | "error";
 }
+
 interface ToastContextValue {
-  push: (msg: string, type?: ToastItem["type"]) => void;
+  push: (msg: string | ToastItem, type?: ToastItem["type"]) => void;
 }
 const ToastCtx = createContext<ToastContextValue | null>(null);
 
@@ -20,12 +24,27 @@ export function useToast() {
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
   const push = useCallback(
-    (message: string, type: ToastItem["type"] = "info") => {
+    (msg: string | ToastItem, type: ToastItem["type"] = "info") => {
       const id = Date.now();
-      setItems((list) => [...list, { id, message, type }]);
+      let toastItem: ToastItem;
+
+      if (typeof msg === "string") {
+        toastItem = { id, message: msg, type };
+      } else {
+        // Handle object format {title, description, variant}
+        toastItem = {
+          id,
+          title: msg.title,
+          description: msg.description,
+          message: msg.message || msg.description,
+          type: msg.variant || msg.type || type,
+        };
+      }
+
+      setItems((list) => [...list, toastItem]);
       setTimeout(
         () => setItems((list) => list.filter((i) => i.id !== id)),
-        3000
+        4000
       );
     },
     []
@@ -38,29 +57,39 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         aria-label="Notifications"
         className="fixed bottom-4 right-4 space-y-2 z-50"
       >
-        {items.map((t) =>
-          t.type === "error" ? (
+        {items.map((t) => {
+          const message =
+            t.message || t.description || t.title || "Notification";
+          const toastType = t.type || t.variant || "info";
+
+          return toastType === "error" ? (
             <div
               key={t.id}
               role="alert"
               aria-atomic="true"
-              className="px-4 py-2 rounded-md shadow text-sm font-medium text-white backdrop-blur flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 bg-red-600/90"
+              className="px-4 py-3 rounded-md shadow-lg text-sm font-medium text-white backdrop-blur flex flex-col gap-1 animate-in fade-in slide-in-from-bottom-2 bg-red-600/90 min-w-72"
             >
-              <span>{t.message}</span>
+              {t.title && (
+                <div className="font-semibold text-sm">{t.title}</div>
+              )}
+              <span className="text-sm opacity-90">{message}</span>
             </div>
           ) : (
             <div
               key={t.id}
               role="status"
               aria-atomic="true"
-              className={`px-4 py-2 rounded-md shadow text-sm font-medium text-white backdrop-blur flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 ${
-                t.type === "success" ? "bg-emerald-600/90" : "bg-sky-600/90"
+              className={`px-4 py-3 rounded-md shadow-lg text-sm font-medium text-white backdrop-blur flex flex-col gap-1 animate-in fade-in slide-in-from-bottom-2 min-w-72 ${
+                toastType === "success" ? "bg-emerald-600/90" : "bg-sky-600/90"
               }`}
             >
-              <span>{t.message}</span>
+              {t.title && (
+                <div className="font-semibold text-sm">{t.title}</div>
+              )}
+              <span className="text-sm opacity-90">{message}</span>
             </div>
-          )
-        )}
+          );
+        })}
       </div>
     </ToastCtx.Provider>
   );

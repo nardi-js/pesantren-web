@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import Gallery from "@/models/Gallery";
+import Gallery, { IGallery } from "@/models/Gallery";
 import { handleFileUpload } from "@/lib/upload";
 import { deleteFile } from "@/lib/cloudinary";
 import { extractPublicIdFromUrl } from "@/lib/upload";
@@ -61,13 +61,19 @@ export async function PUT(
       // Handle FormData with file uploads
       const formData = await request.formData();
 
-      const updateData: any = {
+      const updateData: Partial<IGallery> = {
         title: formData.get("title") as string,
         description: formData.get("description") as string,
-        type: (formData.get("type") as string) || existingGallery.type,
+        type:
+          (formData.get("type") as string as "image" | "video" | "album") ||
+          existingGallery.type,
         category: formData.get("category") as string,
         tags: JSON.parse((formData.get("tags") as string) || "[]"),
-        status: (formData.get("status") as string) || existingGallery.status,
+        status:
+          (formData.get("status") as string as
+            | "draft"
+            | "published"
+            | "archived") || existingGallery.status,
         featured: (formData.get("featured") as string) === "true",
       };
 
@@ -104,8 +110,13 @@ export async function PUT(
         const imageFile = formData.get("image") as File;
         if (imageFile && imageFile.size > 0) {
           // Delete old image if exists
-          if (existingGallery.content?.url && existingGallery.content.type === "image") {
-            const publicId = extractPublicIdFromUrl(existingGallery.content.url);
+          if (
+            existingGallery.content?.url &&
+            existingGallery.content.type === "image"
+          ) {
+            const publicId = extractPublicIdFromUrl(
+              existingGallery.content.url
+            );
             if (publicId) {
               await deleteFile(publicId);
             }

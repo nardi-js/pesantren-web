@@ -80,6 +80,21 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     console.log("📋 Testimonials POST data:", data);
 
+    // Validate content length
+    if (
+      !data.content ||
+      data.content.length < 50 ||
+      data.content.length > 300
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Content must be between 50 and 300 characters",
+        },
+        { status: 400 }
+      );
+    }
+
     const testimonial = new Testimonial({
       name: data.name,
       position: data.position,

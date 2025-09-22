@@ -85,7 +85,7 @@ export function Sidebar({
         ref={panelRef}
         className={`group fixed z-40 inset-y-0 left-0 flex flex-col will-change-transform ${
           collapsed ? "w-[4.75rem]" : "w-64"
-        } border-r border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl shadow-xl shadow-sky-900/10 lg:translate-x-0 transform transition-[width,transform] duration-300 ease-out ${
+        } border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-sky-900/10 lg:translate-x-0 transform transition-[width,transform] duration-300 ease-out ${
           open ? "translate-x-0" : "-translate-x-full"
         } lg:static lg:shadow-none h-screen`}
         aria-label="Sidebar navigation"

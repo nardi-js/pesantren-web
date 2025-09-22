@@ -118,8 +118,16 @@ export async function POST(request: NextRequest) {
       };
 
       // Ensure author name is not empty
-      if (!newsData.author?.name || newsData.author.name.trim() === "") {
-        newsData.author.name = "Admin";
+      if (
+        !newsData.author ||
+        !newsData.author.name ||
+        newsData.author.name.trim() === ""
+      ) {
+        if (!newsData.author) {
+          newsData.author = { name: "Admin" };
+        } else {
+          newsData.author.name = "Admin";
+        }
       }
 
       console.log("Processed news data:", JSON.stringify(newsData, null, 2));
@@ -189,8 +197,16 @@ export async function POST(request: NextRequest) {
       };
 
       // Ensure author name is not empty
-      if (!newsData.author?.name || newsData.author.name.trim() === "") {
-        newsData.author.name = "Admin";
+      if (
+        !newsData.author ||
+        !newsData.author.name ||
+        newsData.author.name.trim() === ""
+      ) {
+        if (!newsData.author) {
+          newsData.author = { name: "Admin" };
+        } else {
+          newsData.author.name = "Admin";
+        }
       }
 
       console.log(

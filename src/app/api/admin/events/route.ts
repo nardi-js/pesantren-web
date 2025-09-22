@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     // Get events with pagination
     const events = await Event.find(filter)
-      .sort({ startDate: -1 })
+      .sort({ date: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
@@ -80,26 +80,24 @@ export async function POST(request: NextRequest) {
 
     const event = new Event({
       title: data.title,
+      slug: data.slug,
       description: data.description,
-      startDate: new Date(data.startDate),
-      endDate: data.endDate ? new Date(data.endDate) : undefined,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      content: data.content,
+      featuredImage: data.featuredImage,
+      date: data.date ? new Date(data.date) : new Date(),
+      time: data.time,
       location: data.location,
-      capacity: data.capacity || 0,
+      capacity: data.capacity,
       registered: 0,
-      price: data.price || 0,
+      registrationOpen: data.registrationOpen ?? true,
+      registrationLink: data.registrationLink,
       category: data.category,
       tags: data.tags || [],
       status: data.status || "draft",
-      featured: data.featured || false,
-      image: data.image,
-      registrationDeadline: data.registrationDeadline
-        ? new Date(data.registrationDeadline)
-        : undefined,
-      requirements: data.requirements || [],
-      organizer: data.organizer,
-      contact: data.contact,
+      organizer: data.organizer || { name: "Admin" },
+      seo: data.seo || {},
+      price: data.price,
+      currency: data.currency,
     });
 
     const savedEvent = await event.save();
@@ -113,15 +111,15 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("❌ Create event error:", error);
 
-    if (error.name === "ValidationError") {
+    if (error instanceof Error && error.name === "ValidationError") {
       return NextResponse.json(
         {
           success: false,
           error: "Validation error",
-          details: error.errors,
+          details: (error as any).errors,
         },
         { status: 400 }
       );

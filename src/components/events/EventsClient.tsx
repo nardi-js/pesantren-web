@@ -1,13 +1,25 @@
 "use client";
-import { useMemo, useState } from "react";
-import {
-  EVENTS,
-  EVENT_CATEGORIES,
-  EventItem,
-  upcomingEvents,
-} from "@/data/events";
+import { useMemo, useState, useEffect } from "react";
+import { EVENT_CATEGORIES } from "@/data/events";
 import Image from "next/image";
 import Link from "next/link";
+
+interface Event {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  featuredImage: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  tags: string[];
+  registrationOpen: boolean;
+  capacity?: number;
+  registered: number;
+  price?: number;
+}
 
 interface FilterState {
   category: string;
@@ -28,25 +40,62 @@ const PRAYER_TIMES = [
 
 export default function EventsClient() {
   const [filters, setFilters] = useState<FilterState>(initialFilters);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({
+          page: "1",
+          limit: "50",
+          upcoming: "true", // Only get upcoming events
+        });
+
+        if (filters.category !== "All") {
+          params.append("category", filters.category);
+        }
+
+        if (filters.search) {
+          params.append("search", filters.search);
+        }
+
+        const response = await fetch(`/api/events?${params}`);
+        const result = await response.json();
+
+        if (result.success) {
+          setEvents(result.data.events);
+        } else {
+          setError("Gagal memuat data events");
+        }
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setError("Gagal memuat data events");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [filters.category, filters.search]);
 
   const change = (k: keyof FilterState, v: string) =>
     setFilters((f) => ({ ...f, [k]: v }));
 
   const filtered = useMemo(() => {
-    return EVENTS.filter((e) => {
-      if (filters.category !== "All" && e.category !== filters.category)
-        return false;
-      if (filters.date && e.date !== filters.date) return false;
-      if (
-        filters.search &&
-        !e.title.toLowerCase().includes(filters.search.toLowerCase())
-      )
-        return false;
+    return events.filter((e) => {
+      if (filters.date) {
+        const eventDate = new Date(e.date).toISOString().split("T")[0];
+        if (eventDate !== filters.date) return false;
+      }
       return true;
     });
-  }, [filters]);
+  }, [events, filters.date]);
 
-  const nextUpcoming = useMemo(() => upcomingEvents()[0], []);
+  const nextUpcoming = useMemo(() => filtered[0], [filtered]);
 
   return (
     <section className="section-base pt-20 pb-20">
@@ -58,10 +107,22 @@ export default function EventsClient() {
         />
         {nextUpcoming && <UpcomingHighlight item={nextUpcoming} />}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((e, idx) => (
-            <EventCard key={e.id} event={e} idx={idx} />
-          ))}
-          {filtered.length === 0 && (
+          {loading ? (
+            Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} className="animate-pulse">
+                <div className="bg-gray-200 dark:bg-gray-700 rounded-xl h-64"></div>
+              </div>
+            ))
+          ) : error ? (
+            <div className="col-span-full text-center text-red-500">
+              {error}
+            </div>
+          ) : (
+            filtered.map((e, idx) => (
+              <EventCard key={e._id} event={e} idx={idx} />
+            ))
+          )}
+          {!loading && !error && filtered.length === 0 && (
             <p className="col-span-full text-center text-sm text-[hsl(var(--foreground-soft))]">
               Tidak ada event cocok dengan filter.
             </p>
@@ -153,12 +214,12 @@ function Filters({
   );
 }
 
-function UpcomingHighlight({ item }: { item: EventItem }) {
+function UpcomingHighlight({ item }: { item: Event }) {
   return (
     <div className="rounded-2xl overflow-hidden surface-card elevated hoverable grid md:grid-cols-[320px_1fr] gap-0 animate-fade-up">
       <div className="relative h-56 md:h-full">
         <Image
-          src={item.image}
+          src={item.featuredImage}
           alt={item.title}
           fill
           className="object-cover object-center transition-transform duration-500 md:group-hover:scale-[1.04]"
@@ -186,10 +247,10 @@ function UpcomingHighlight({ item }: { item: EventItem }) {
           >
             Lihat Detail
           </Link>
-          {item.tags?.slice(0, 3).map((t) => (
+          {item.tags?.slice(0, 3).map((t: string) => (
             <span
               key={t}
-              className="px-3 py-1 rounded-full text-[11px] font-medium bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 ring-1 ring-sky-200/50 dark:ring-sky-700/40"
+              className="px-3 py-1 rounded-full text-[11px] font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
             >
               {t}
             </span>
@@ -200,7 +261,7 @@ function UpcomingHighlight({ item }: { item: EventItem }) {
   );
 }
 
-function EventCard({ event, idx }: { event: EventItem; idx: number }) {
+function EventCard({ event, idx }: { event: Event; idx: number }) {
   const delay =
     idx % 3 === 0
       ? "animation-delay-0"
@@ -213,7 +274,7 @@ function EventCard({ event, idx }: { event: EventItem; idx: number }) {
     >
       <div className="relative h-48">
         <Image
-          src={event.image}
+          src={event.featuredImage}
           alt={event.title}
           fill
           className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.06]"
@@ -232,6 +293,26 @@ function EventCard({ event, idx }: { event: EventItem; idx: number }) {
         <p className="text-sm text-[hsl(var(--foreground-soft))] line-clamp-3">
           {event.description}
         </p>
+
+        {/* Tags */}
+        {event.tags && event.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {event.tags.slice(0, 2).map((tag: string) => (
+              <span
+                key={tag}
+                className="px-2 py-1 rounded-full text-[10px] font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm"
+              >
+                {tag}
+              </span>
+            ))}
+            {event.tags.length > 2 && (
+              <span className="px-2 py-1 rounded-full text-[10px] font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                +{event.tags.length - 2}
+              </span>
+            )}
+          </div>
+        )}
+
         <div className="pt-1 mt-auto">
           <Link
             href={`/events/${event.slug}`}
@@ -245,7 +326,7 @@ function EventCard({ event, idx }: { event: EventItem; idx: number }) {
   );
 }
 
-function MetaLine({ event, small }: { event: EventItem; small?: boolean }) {
+function MetaLine({ event, small }: { event: Event; small?: boolean }) {
   return (
     <div
       className={`flex flex-wrap items-center gap-4 ${
@@ -261,7 +342,7 @@ function MetaLine({ event, small }: { event: EventItem; small?: boolean }) {
         >
           <path d="M8 2v2m8-2v2M3 9h18M5 7h14v13H5z" />
         </svg>
-        {new Date(event.date + "T" + event.time).toLocaleDateString("id-ID", {
+        {new Date(event.date).toLocaleDateString("id-ID", {
           day: "numeric",
           month: "short",
           year: "numeric",

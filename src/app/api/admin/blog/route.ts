@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import Blog from "@/models/Blog";
+import Blog, { IBlog } from "@/models/Blog";
 import { handleFileUpload } from "@/lib/upload";
 
 // GET /api/admin/blog - Get all blogs with pagination and filtering
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/blog - Create new blog
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Blog POST  API called");
+    console.log("📝 Blog POST API called");
 
     await connectDB();
     console.log("✅ Database connected for Blog POST");
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Extract blog data
-      const blogData: any = {
+      const blogData: Partial<IBlog> = {
         title: formData.get("title") as string,
         excerpt: formData.get("excerpt") as string,
         content: formData.get("content") as string,
@@ -100,7 +100,9 @@ export async function POST(request: NextRequest) {
         },
         category: formData.get("category") as string,
         tags: JSON.parse((formData.get("tags") as string) || "[]"),
-        status: (formData.get("status") as string) || "draft",
+        status:
+          (formData.get("status") as "draft" | "published" | "archived") ||
+          "draft",
         seo: {
           title: (formData.get("seoTitle") as string) || undefined,
           description: (formData.get("seoDescription") as string) || undefined,
@@ -211,23 +213,25 @@ export async function POST(request: NextRequest) {
         { status: 201 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("❌ Create blog error:", error);
 
-    if (error.name === "ValidationError") {
-      console.error("❌ Validation errors:", error.errors);
+    if (error instanceof Error && error.name === "ValidationError") {
+      console.error("❌ Validation errors:", error);
       return NextResponse.json(
         {
           success: false,
-          error: "Validation error",
-          details: error.errors,
+          error: "Validation failed",
+          details: error.message,
         },
         { status: 400 }
       );
     }
 
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to create blog";
     return NextResponse.json(
-      { success: false, error: "Failed to create blog" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

@@ -6,12 +6,14 @@ export interface IEvent extends Document {
   description: string;
   content?: string;
   featuredImage: string;
+  youtubeUrl?: string;
   date: Date;
   time: string;
   location: string;
   capacity?: number;
   registered: number;
   registrationOpen: boolean;
+  registrationLink?: string;
   category: string;
   tags: string[];
   status: "draft" | "published" | "cancelled" | "completed";
@@ -55,6 +57,10 @@ const EventSchema = new Schema<IEvent>(
       type: String,
       required: [true, "Featured image is required"],
     },
+    youtubeUrl: {
+      type: String,
+      trim: true,
+    },
     date: {
       type: Date,
       required: [true, "Event date is required"],
@@ -79,6 +85,10 @@ const EventSchema = new Schema<IEvent>(
     registrationOpen: {
       type: Boolean,
       default: true,
+    },
+    registrationLink: {
+      type: String,
+      trim: true,
     },
     category: {
       type: String,

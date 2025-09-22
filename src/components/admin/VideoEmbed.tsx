@@ -1,14 +1,25 @@
 "use client";
 import { useState } from "react";
 
-export function VideoEmbed() {
-  const [url, setUrl] = useState("");
+interface VideoEmbedProps {
+  value?: string;
+  onChange?: (url: string) => void;
+}
+
+export function VideoEmbed({ value = "", onChange }: VideoEmbedProps) {
+  const [url, setUrl] = useState(value);
+  
+  const handleChange = (newUrl: string) => {
+    setUrl(newUrl);
+    onChange?.(newUrl);
+  };
+
   return (
     <div className="space-y-2">
       <input
         value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        placeholder="YouTube URL"
+        onChange={(e) => handleChange(e.target.value)}
+        placeholder="YouTube URL (https://www.youtube.com/watch?v=...)"
         aria-label="YouTube video URL"
         className="w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white/70 dark:bg-slate-800/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
       />

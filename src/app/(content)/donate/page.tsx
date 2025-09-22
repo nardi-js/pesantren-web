@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function DonatePage() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col islamic-pattern">
       <Hero />
       <CampaignsList />
       <DonationContent />
@@ -19,28 +19,27 @@ export default function DonatePage() {
 
 function Hero() {
   return (
-    <section className="relative h-[230px] md:h-[280px] w-full flex items-center justify-center overflow-hidden section-alt pt-28 md:pt-32">
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/25 via-sky-600/25 to-emerald-500/25 dark:from-sky-800/30 dark:via-sky-700/25 dark:to-emerald-700/20" />
-      <div className="absolute inset-0 backdrop-blur-sm" />
-      <div className="relative z-10 text-center px-6 max-w-3xl space-y-5">
-        <h1 className="heading-lg md:heading-xl bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-300 dark:to-emerald-300 animate-fade-up">
+    <section className="relative w-full h-[400px] md:h-[480px] overflow-hidden flex items-center justify-center bg-gradient-to-br from-sky-100 via-sky-200 to-emerald-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+      {/* Islamic Pattern Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-sky-500/10 to-emerald-500/10 dark:from-emerald-400/5 dark:via-sky-400/5 dark:to-emerald-400/5" />
+
+      <div className="relative z-10 text-center px-6 max-w-4xl space-y-6 mt-20">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-600 dark:from-emerald-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent animate-fade-up">
           Donasi & Dukungan
         </h1>
-        <p className="text-soft font-medium animate-fade-up animation-delay-100 text-balance">
+        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-medium animate-fade-up animation-delay-100 leading-relaxed">
           Setiap kontribusi Anda membantu menjaga keberlangsungan pembinaan,
-          pendidikan, dan dakwah.
+          pendidikan, dan dakwah pesantren
         </p>
-        <a
-          href="#donasi"
-          className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-semibold text-sm px-8 py-3 shadow-lg hover:shadow-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 animate-fade-up animation-delay-200"
-        >
-          Donasi Sekarang
-        </a>
+        <div className="animate-fade-up animation-delay-200">
+          <a
+            href="#donasi"
+            className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-semibold text-sm px-8 py-3 shadow-lg hover:shadow-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
+          >
+            Donasi Sekarang
+          </a>
+        </div>
       </div>
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(circle_at_center,white,transparent_70%)] bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.4),transparent_60%)] mix-blend-screen opacity-60"
-      />
     </section>
   );
 }

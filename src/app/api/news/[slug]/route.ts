@@ -13,12 +13,22 @@ export async function GET(
     const { slug } = await params;
 
     // Find news by slug and only if published
-    const news = await News.findOne({
+    const newsResult = await News.findOne({
       slug,
       status: "published",
     })
       .select("-__v")
       .lean();
+
+    if (!newsResult) {
+      return NextResponse.json(
+        { success: false, error: "News not found" },
+        { status: 404 }
+      );
+    }
+
+    // Ensure it's a single document, not an array
+    const news = Array.isArray(newsResult) ? newsResult[0] : newsResult;
 
     if (!news) {
       return NextResponse.json(

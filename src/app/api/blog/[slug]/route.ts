@@ -5,13 +5,14 @@ import Blog from "@/models/Blog";
 // GET /api/blog/[slug] - Get single published blog by slug
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     await connectDB();
 
     const blog = await Blog.findOne({
-      slug: params.slug,
+      slug: slug,
       status: "published",
     }).lean();
 

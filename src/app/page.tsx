@@ -1,6 +1,6 @@
 import Hero from "../components/Hero";
 import { NewsHighlight } from "../components/NewsHighlight";
-import GalleryPreview from "../components/GalleryPreview";
+import { GalleryPreview } from "../components/GalleryPreview";
 import TestimonialsCarousel from "../components/TestimonialsCarousel";
 import SiteLayout from "@/components/SiteLayout";
 import Providers from "@/components/Providers";

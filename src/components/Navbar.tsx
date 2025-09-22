@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Container from "./Container";
 import cn from "classnames";
+import Image from "next/image";
 
 // Simple theme toggle component inline
 function ThemeToggle({ scrolled = false }: { scrolled?: boolean }) {
@@ -121,7 +122,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-lg border-b border-gray-200/80 dark:border-gray-700/80"
+          ? "bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700"
           : "bg-transparent"
       )}
     >
@@ -131,17 +132,15 @@ export function Navbar() {
             href="/"
             className="group flex items-center gap-4 hover:scale-[1.02] transition-transform duration-200"
           >
-            {/* Islamic inspired logo with dual theme */}
-            <div
-              className={cn(
-                "relative w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-sky-600 dark:from-emerald-400 dark:via-emerald-500 dark:to-sky-500 flex items-center justify-center text-white font-bold text-xl shadow-lg ring-2 ring-emerald-200/50 dark:ring-emerald-400/30 transition-all duration-300",
-                !scrolled && "ring-white/30 dark:ring-white/20"
-              )}
-            >
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V16L8 18V21H16V18L13 16V11C14.1 11 15 10.1 15 9H21Z" />
-              </svg>
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-sky-500 dark:from-emerald-400 dark:to-sky-400 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+            {/* Logo */}
+            <div className="relative">
+              <Image
+                src="/logo.svg"
+                className="rounded-full"
+                alt="Pesantren Logo"
+                height={50}
+                width={50}
+              />
             </div>
             <div className="flex flex-col">
               <span
@@ -253,17 +252,17 @@ export function Navbar() {
         aria-label="Mobile navigation"
         className={cn(
           "lg:hidden fixed inset-y-0 right-0 w-80 max-w-full z-50 transform transition-transform duration-300 will-change-transform shadow-2xl",
-          "backdrop-blur-xl bg-white/90 dark:bg-[hsl(var(--surface)/0.92)] border-l border-[hsl(var(--border))]",
+          "bg-white dark:bg-slate-900 border-l border-gray-200 dark:border-gray-700",
           open ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex h-16 items-center justify-between px-6 border-b border-[hsl(var(--divider))]">
-          <span className="font-bold text-lg text-[hsl(var(--foreground))]">
+        <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
+          <span className="font-bold text-lg text-gray-900 dark:text-white">
             Menu
           </span>
           <button
             onClick={() => setOpen(false)}
-            className="h-10 w-10 inline-flex items-center justify-center rounded-lg hover:bg-sky-50/70 dark:hover:bg-sky-900/40 transition-colors"
+            className="h-10 w-10 inline-flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Close menu"
           >
             <svg
@@ -290,16 +289,16 @@ export function Navbar() {
                 className={cn(
                   "px-4 py-3 rounded-lg text-base font-medium transition-all duration-200",
                   active
-                    ? "text-sky-700 dark:text-sky-300 bg-sky-50/90 dark:bg-sky-900/40"
-                    : "text-[hsl(var(--foreground-soft))] hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/70 dark:hover:bg-sky-900/30"
+                    ? "text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900"
+                    : "text-gray-600 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 )}
               >
                 {item.label}
               </Link>
             );
           })}
-          <div className="px-4 pt-6 border-t border-[hsl(var(--divider))] mt-4">
-            <p className="text-xs uppercase tracking-wide font-bold text-[hsl(var(--foreground-muted))] mb-3">
+          <div className="px-4 pt-6 border-t border-gray-200 dark:border-gray-700 mt-4">
+            <p className="text-xs uppercase tracking-wide font-bold text-gray-500 dark:text-gray-400 mb-3">
               Settings
             </p>
             <ThemeToggle />

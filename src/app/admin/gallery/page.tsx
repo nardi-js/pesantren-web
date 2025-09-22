@@ -10,11 +10,24 @@ interface GalleryItem {
   _id: string;
   title: string;
   description: string;
-  imageCount: number;
-  coverImage: string;
-  album: string;
-  status: "draft" | "published" | "archived";
+  type: "image" | "video" | "album";
+  category: string;
+  status: "draft" | "published";
+  featured: boolean;
   tags: string[];
+  coverImage: string;
+  content?: {
+    image?: string;
+    caption?: string;
+    altText?: string;
+    youtubeId?: string;
+  };
+  items?: Array<{
+    type: "image" | "video";
+    image?: string;
+    youtubeId?: string;
+    caption?: string;
+  }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -34,7 +47,6 @@ function GalleryListClient() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const { push } = useToast();
 
@@ -42,7 +54,6 @@ function GalleryListClient() {
   const fetchGallery = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await AdminApi.getGallery({
         page: 1,
         limit: 50,
@@ -67,9 +78,7 @@ function GalleryListClient() {
         errorMessage.includes("404")
       ) {
         setGallery([]);
-        setError(null);
       } else {
-        setError(errorMessage);
         push(errorMessage, "error");
       }
     } finally {
@@ -86,7 +95,7 @@ function GalleryListClient() {
     const matchesSearch =
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.album.toLowerCase().includes(searchQuery.toLowerCase());
+      item.category.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -278,7 +287,9 @@ function GalleryListClient() {
                     </span>
                   </div>
                   <div className="absolute bottom-3 right-3 bg-black/60 text-white px-2 py-1 rounded text-xs">
-                    {gallery.imageCount} photos
+                    {gallery.type === "album"
+                      ? `${gallery.items?.length || 0} items`
+                      : gallery.type}
                   </div>
                 </div>
                 <div className="p-4">
@@ -290,11 +301,11 @@ function GalleryListClient() {
                   </p>
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-xs text-slate-400 dark:text-slate-500">
-                      {gallery.album}
+                      {gallery.category}
                     </span>
                     <div className="flex gap-2">
                       <Link
-                        href={`/admin/gallery/${gallery._id}/edit`}
+                        href={`/admin/gallery/${gallery._id}`}
                         className="text-sky-600 hover:text-sky-500 text-xs font-medium"
                       >
                         Edit
@@ -414,11 +425,13 @@ function GalleryListClient() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300">
-                        {gallery.album}
+                        {gallery.category}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-                      {gallery.imageCount}
+                      {gallery.type === "album"
+                        ? gallery.items?.length || 0
+                        : 1}
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -437,7 +450,7 @@ function GalleryListClient() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Link
-                          href={`/admin/gallery/${gallery._id}/edit`}
+                          href={`/admin/gallery/${gallery._id}`}
                           className="text-sky-600 hover:text-sky-500 text-xs font-medium"
                         >
                           Edit
@@ -485,12 +498,13 @@ function GalleryListClient() {
         <div className="bg-white/60 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-800 p-4">
           <div className="text-2xl font-bold text-green-600">
             {gallery.reduce(
-              (sum: number, g: GalleryItem) => sum + g.imageCount,
+              (sum: number, g: GalleryItem) =>
+                sum + (g.type === "album" ? g.items?.length || 0 : 1),
               0
             )}
           </div>
           <div className="text-sm text-slate-500 dark:text-slate-400">
-            Total Photos
+            Total Items
           </div>
         </div>
         <div className="bg-white/60 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-800 p-4">

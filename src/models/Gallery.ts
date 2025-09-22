@@ -6,7 +6,7 @@ export interface IGallery extends Document {
   description?: string;
   type: "image" | "video" | "album";
   coverImage: string;
-  
+
   // For single images/videos
   content?: {
     type: "image" | "youtube";
@@ -15,7 +15,7 @@ export interface IGallery extends Document {
     altText?: string;
     youtubeId?: string; // For YouTube videos
   };
-  
+
   // For albums/multiple items
   items: Array<{
     type: "image" | "youtube";
@@ -25,7 +25,7 @@ export interface IGallery extends Document {
     youtubeId?: string; // For YouTube videos
     order: number;
   }>;
-  
+
   category: string;
   tags: string[];
   status: "draft" | "published" | "archived";
