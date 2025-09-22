@@ -8,14 +8,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    console.log(
-      "🔍 Public Campaign Detail GET API called for slug:",
-      slug
-    );
-
     await connectDB();
-    console.log("✅ Database connected for Public Campaign Detail GET");
-
     const campaign = await DonationCampaign.findOne({
       slug: slug,
       status: "active",
@@ -30,15 +23,11 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    console.log("✅ Campaign found:", campaign);
-
     return NextResponse.json({
       success: true,
       data: campaign,
     });
   } catch (error) {
-    console.error("❌ Public Campaign Detail GET error:", error);
     return NextResponse.json(
       {
         success: false,

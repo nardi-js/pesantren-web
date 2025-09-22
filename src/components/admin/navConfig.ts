@@ -10,6 +10,7 @@ export const adminNavItems: AdminNavItem[] = [
   { label: "Gallery", href: "/admin/gallery", icon: "gallery" },
   { label: "Events", href: "/admin/events", icon: "events" },
   { label: "Testimonials", href: "/admin/testimonials", icon: "testimonials" },
+  { label: "Contacts", href: "/admin/contacts", icon: "contacts" },
   { label: "Donasi", href: "/admin/donations", icon: "donations" },
   { label: "Campaigns", href: "/admin/campaigns", icon: "campaigns" },
   { label: "Blog", href: "/admin/blog", icon: "blog" },

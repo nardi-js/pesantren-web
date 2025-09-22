@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/components/admin/ToastProvider";
@@ -37,13 +37,16 @@ interface CampaignResponse {
   updatedAt: string;
 }
 
+interface Params {
+  id: string;
+}
+
 interface CampaignEditPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<Params>;
 }
 
 export default function EditCampaignPage({ params }: CampaignEditPageProps) {
+  const resolvedParams = use(params);
   const router = useRouter();
   const { push } = useToast();
   const [loading, setLoading] = useState(false);
@@ -76,7 +79,7 @@ export default function EditCampaignPage({ params }: CampaignEditPageProps) {
     const fetchCampaign = async () => {
       try {
         setFetchLoading(true);
-        const response = await AdminApi.getCampaignById(params.id);
+        const response = await AdminApi.getCampaignById(resolvedParams.id);
 
         if (response.success && response.data) {
           const campaign = response.data as CampaignResponse;
@@ -109,10 +112,10 @@ export default function EditCampaignPage({ params }: CampaignEditPageProps) {
       }
     };
 
-    if (params.id) {
+    if (resolvedParams.id) {
       fetchCampaign();
     }
-  }, [params.id, push, router]);
+  }, [resolvedParams.id, push, router]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -174,7 +177,10 @@ export default function EditCampaignPage({ params }: CampaignEditPageProps) {
         delete submitData.endDate;
       }
 
-      const response = await AdminApi.updateCampaign(params.id, submitData);
+      const response = await AdminApi.updateCampaign(
+        resolvedParams.id,
+        submitData
+      );
 
       if (response.success) {
         push("Campaign updated successfully!", "success");

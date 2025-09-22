@@ -7,12 +7,22 @@ interface FormState {
   subject: string;
   message: string;
 }
+
+interface SubmitResponse {
+  success: boolean;
+  error?: string;
+  data?: {
+    message: string;
+  };
+}
+
 const initial: FormState = { name: "", email: "", subject: "", message: "" };
 
 export default function ContactForm() {
   const [values, setValues] = useState<FormState>(initial);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,13 +33,39 @@ export default function ContactForm() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!values.name || !values.email || !values.subject || !values.message) {
+      setError("Semua field wajib diisi");
+      return;
+    }
+
     setSending(true);
-    // Simulate submit
-    await new Promise((r) => setTimeout(r, 900));
-    setSending(false);
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    setValues(initial);
+    setError("");
+
+    try {
+      const response = await fetch("/api/contact/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const result: SubmitResponse = await response.json();
+
+      if (result.success) {
+        setSent(true);
+        setValues(initial);
+        setTimeout(() => setSent(false), 5000);
+      } else {
+        setError(result.error || "Gagal mengirim pesan");
+      }
+    } catch (err) {
+      console.error("Submit error:", err);
+      setError("Gagal mengirim pesan. Silakan coba lagi.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const disabled = sending || !values.name || !values.email || !values.message;
@@ -80,7 +116,12 @@ export default function ContactForm() {
         </button>
         {sent && (
           <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 animate-fade-up">
-            Terkirim!
+            Pesan berhasil dikirim!
+          </span>
+        )}
+        {error && (
+          <span className="text-xs font-medium text-red-600 dark:text-red-400">
+            {error}
           </span>
         )}
       </div>

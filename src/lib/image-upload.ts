@@ -11,13 +11,6 @@ export async function uploadImageToCloudinary(imageData: ImageData): Promise<{
   try {
     const formData = new FormData();
     formData.append("file", imageData.file);
-
-    console.log("🚀 Uploading image to Cloudinary:", {
-      name: imageData.file.name,
-      size: imageData.file.size,
-      type: imageData.file.type,
-    });
-
     const response = await fetch("/api/upload/image", {
       method: "POST",
       body: formData,
@@ -25,14 +18,12 @@ export async function uploadImageToCloudinary(imageData: ImageData): Promise<{
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("❌ Upload response error:", errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const result = await response.json();
 
     if (result.success && result.data?.secure_url) {
-      console.log("✅ Upload successful, URL:", result.data.secure_url);
       return {
         success: true,
         url: result.data.secure_url,
@@ -41,7 +32,6 @@ export async function uploadImageToCloudinary(imageData: ImageData): Promise<{
       throw new Error(result.error || "Upload failed");
     }
   } catch (error) {
-    console.error("❌ Image upload error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Upload failed",

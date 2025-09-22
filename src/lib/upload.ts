@@ -138,7 +138,6 @@ export async function uploadSingleFile(
       data: result,
     };
   } catch (error) {
-    console.error("File upload error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Upload failed",
@@ -172,7 +171,6 @@ export async function handleFileUpload(
 
     return uploadSingleFile(fileData, options);
   } catch (error) {
-    console.error("Handle file upload error:", error);
     return {
       success: false,
       error:
@@ -250,7 +248,6 @@ export async function handleMultipleFileUpload(
       results,
     };
   } catch (error) {
-    console.error("Handle multiple file upload error:", error);
     return {
       success: false,
       error:
@@ -280,7 +277,6 @@ export function extractPublicIdFromUrl(url: string): string | null {
 
     return publicId;
   } catch (error) {
-    console.error("Error extracting public ID:", error);
     return null;
   }
 }

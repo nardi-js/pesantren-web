@@ -63,8 +63,6 @@ export default function NewNewsPage() {
     }
 
     setLoading(true);
-    console.log("🚀 Submitting news data:", { ...formData, status });
-
     try {
       let imageUrl =
         formData.image ||
@@ -72,14 +70,11 @@ export default function NewNewsPage() {
 
       // Upload image to Cloudinary if selected
       if (selectedImage && !selectedImage.isUploaded) {
-        console.log("📤 Uploading selected image to Cloudinary...");
         const uploadResult = await uploadImageToCloudinary(selectedImage);
 
         if (uploadResult.success && uploadResult.url) {
           imageUrl = uploadResult.url;
-          console.log("✅ Image uploaded successfully:", imageUrl);
         } else {
-          console.error("❌ Image upload failed:", uploadResult.error);
           push(`Image upload failed: ${uploadResult.error}`, "error");
           setLoading(false);
           return;
@@ -105,12 +100,7 @@ export default function NewNewsPage() {
           .filter((tag) => tag),
         image: imageUrl,
       };
-
-      console.log("📤 Sending to API:", submitData);
-
       const response = await AdminApi.createNews(submitData);
-      console.log("📥 API Response:", response);
-
       if (response.success) {
         push(
           `News article ${
@@ -123,7 +113,6 @@ export default function NewNewsPage() {
         throw new Error(response.error || "Failed to create news");
       }
     } catch (error) {
-      console.error("❌ News submission error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to create news";
       push(errorMessage, "error");

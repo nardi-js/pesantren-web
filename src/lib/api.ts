@@ -31,8 +31,8 @@ function getBaseURL() {
   const port = process.env.PORT || process.env.NEXT_PUBLIC_PORT || "3000";
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
   const host = process.env.VERCEL_URL || `localhost:${port}`;
-  
-  return process.env.NEXTAUTH_URL 
+
+  return process.env.NEXTAUTH_URL
     ? `${process.env.NEXTAUTH_URL}/api`
     : `${protocol}://${host}/api`;
 }
@@ -100,11 +100,12 @@ export class PublicApiClient {
       if (typeof window === "undefined") {
         // Server-side: use fetch with absolute URL
         const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-        const queryString = params 
-          ? "?" + new URLSearchParams(params as Record<string, string>).toString()
+        const queryString = params
+          ? "?" +
+            new URLSearchParams(params as Record<string, string>).toString()
           : "";
         const fullUrl = `${baseUrl}/api${url}${queryString}`;
-        
+
         const response = await fetch(fullUrl);
         const data = await response.json();
         return data;
@@ -122,8 +123,6 @@ export class PublicApiClient {
    * Handle API errors
    */
   private static handleError<T>(error: unknown): ApiResponse<T> {
-    console.error("API Error:", error);
-
     if (error && typeof error === "object" && "response" in error) {
       const axiosError = error as AxiosError;
       // Server responded with error status
@@ -333,8 +332,6 @@ export class ApiClient {
    * Handle API errors
    */
   private static handleError<T>(error: unknown): ApiResponse<T> {
-    console.error("API Error:", error);
-
     if (error && typeof error === "object" && "response" in error) {
       const axiosError = error as AxiosError;
       // Server responded with error status
@@ -477,7 +474,7 @@ export class AdminApi {
     return ApiClient.get("/admin/gallery", params);
   }
 
-  static async createGalleryItem(data: Record<string, unknown>) {
+  static async createGalleryItem(data: FormData | Record<string, unknown>) {
     return ApiClient.post("/admin/gallery", data);
   }
 
@@ -485,7 +482,10 @@ export class AdminApi {
     return ApiClient.get(`/admin/gallery/${id}`);
   }
 
-  static async updateGalleryItem(id: string, data: Record<string, unknown>) {
+  static async updateGalleryItem(
+    id: string,
+    data: FormData | Record<string, unknown>
+  ) {
     return ApiClient.put(`/admin/gallery/${id}`, data);
   }
 

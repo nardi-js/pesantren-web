@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import Blog from "@/models/Blog";
+import Blog, { IBlog } from "@/models/Blog";
 import { handleFileUpload } from "@/lib/upload";
 
 // GET /api/admin/blog - Get all blogs with pagination and filtering
@@ -62,7 +62,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Get blogs error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch blogs" },
       { status: 500 }
@@ -73,24 +72,16 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/blog - Create new blog
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Blog POST  API called");
-
     await connectDB();
-    console.log("✅ Database connected for Blog POST");
-
     const contentType = request.headers.get("content-type");
-    console.log("📋 Content-Type:", contentType);
-
     if (contentType?.includes("multipart/form-data")) {
       // Handle file upload
       const formData = await request.formData();
-      console.log("📁 FormData entries:");
       for (const [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value);
       }
 
       // Extract blog data
-      const blogData: any = {
+      const blogData: Partial<IBlog> = {
         title: formData.get("title") as string,
         excerpt: formData.get("excerpt") as string,
         content: formData.get("content") as string,
@@ -100,7 +91,9 @@ export async function POST(request: NextRequest) {
         },
         category: formData.get("category") as string,
         tags: JSON.parse((formData.get("tags") as string) || "[]"),
-        status: (formData.get("status") as string) || "draft",
+        status:
+          (formData.get("status") as "draft" | "published" | "archived") ||
+          "draft",
         seo: {
           title: (formData.get("seoTitle") as string) || undefined,
           description: (formData.get("seoDescription") as string) || undefined,
@@ -108,9 +101,6 @@ export async function POST(request: NextRequest) {
         },
         featuredImage: "", // Will be set after upload
       };
-
-      console.log("📋 Extracted blogData:", blogData);
-
       // Handle featured image upload
       const imageFile = formData.get("featuredImage") as File;
       if (imageFile && imageFile.size > 0) {
@@ -132,8 +122,6 @@ export async function POST(request: NextRequest) {
 
       const blog = new Blog(blogData);
       const savedBlog = await blog.save();
-      console.log("✅ Blog saved successfully:", savedBlog._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -145,11 +133,8 @@ export async function POST(request: NextRequest) {
     } else {
       // Handle JSON data
       const data = await request.json();
-      console.log("📋 JSON data received:", data);
-
       // Check if data is empty or missing required fields
       if (!data || Object.keys(data).length === 0) {
-        console.error("❌ Empty data received");
         return NextResponse.json(
           { success: false, error: "No data provided" },
           { status: 400 }
@@ -158,7 +143,6 @@ export async function POST(request: NextRequest) {
 
       // Validate required fields
       if (!data.title) {
-        console.error("❌ Missing required field: title");
         return NextResponse.json(
           { success: false, error: "Title is required" },
           { status: 400 }
@@ -195,13 +179,8 @@ export async function POST(request: NextRequest) {
           keywords: Array.isArray(data.seoKeywords) ? data.seoKeywords : [],
         };
       }
-
-      console.log("📋 Processed data for saving:", data);
-
       const blog = new Blog(data);
       const savedBlog = await blog.save();
-      console.log("✅ Blog saved successfully:", savedBlog._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -211,23 +190,22 @@ export async function POST(request: NextRequest) {
         { status: 201 }
       );
     }
-  } catch (error: any) {
-    console.error("❌ Create blog error:", error);
-
-    if (error.name === "ValidationError") {
-      console.error("❌ Validation errors:", error.errors);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "ValidationError") {
       return NextResponse.json(
         {
           success: false,
-          error: "Validation error",
-          details: error.errors,
+          error: "Validation failed",
+          details: error.message,
         },
         { status: 400 }
       );
     }
 
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to create blog";
     return NextResponse.json(
-      { success: false, error: "Failed to create blog" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

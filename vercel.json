@@ -1,0 +1,24 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev",
+  "env": {
+    "MONGODB_URI": "@mongodb_uri",
+    "MONGODB_DB_NAME": "@mongodb_db_name",
+    "JWT_SECRET": "@jwt_secret",
+    "ADMIN_DEFAULT_EMAIL": "@admin_default_email",
+    "ADMIN_DEFAULT_PASSWORD": "@admin_default_password",
+    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
+    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
+    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret",
+    "SITE_URL": "@site_url"
+  },
+  "regions": ["sin1"],
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}

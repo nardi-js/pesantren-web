@@ -6,10 +6,10 @@ interface MongoConnection {
 }
 
 // Global connection cache
-let cached: MongoConnection = (global as any).mongoose;
+let cached: MongoConnection = (global as unknown as { mongoose: MongoConnection }).mongoose;
 
 if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+  cached = (global as unknown as { mongoose: MongoConnection }).mongoose = { conn: null, promise: null };
 }
 
 export async function connectDB(): Promise<mongoose.Connection> {
@@ -21,7 +21,6 @@ export async function connectDB(): Promise<mongoose.Connection> {
 
   // Return cached connection if exists
   if (cached.conn) {
-    console.log("✅ Using cached MongoDB connection");
     return cached.conn;
   }
 
@@ -33,10 +32,7 @@ export async function connectDB(): Promise<mongoose.Connection> {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     };
-
-    console.log("🔄 Creating new MongoDB connection...");
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log("✅ MongoDB connected successfully");
       return mongoose.connection;
     });
   }
@@ -46,7 +42,6 @@ export async function connectDB(): Promise<mongoose.Connection> {
     return cached.conn;
   } catch (e) {
     cached.promise = null;
-    console.error("❌ MongoDB connection failed:", e);
     throw e;
   }
 }

@@ -4,14 +4,8 @@ import { Donation, DonationCampaign } from "@/models/Donation";
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("🔍 User Donation POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for User Donation POST");
-
     const body = await request.json();
-    console.log("📝 Donation data received:", body);
-
     // Validate required fields
     const requiredFields = ["donorName", "amount", "paymentMethod"];
     for (const field of requiredFields) {
@@ -82,13 +76,7 @@ export async function POST(request: NextRequest) {
       }
 
       await campaign.save();
-      console.log(
-        `✅ Campaign updated: ${campaign.slug}, collected: ${campaign.collected}`
-      );
     }
-
-    console.log("✅ Donation created:", savedDonation.receiptNumber);
-
     return NextResponse.json(
       {
         success: true,
@@ -98,8 +86,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("❌ User Donation POST error:", error);
-
     return NextResponse.json(
       {
         success: false,

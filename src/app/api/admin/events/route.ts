@@ -5,11 +5,7 @@ import Event from "@/models/Event";
 // GET /api/admin/events - Get all events with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Events GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Events GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -36,16 +32,13 @@ export async function GET(request: NextRequest) {
 
     // Get events with pagination
     const events = await Event.find(filter)
-      .sort({ startDate: -1 })
+      .sort({ date: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
     // Get total count
     const total = await Event.countDocuments(filter);
-
-    console.log(`✅ Found ${events.length} events, total: ${total}`);
-
     return NextResponse.json({
       success: true,
       data: {
@@ -59,7 +52,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Get events error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch events" },
       { status: 500 }
@@ -70,41 +62,32 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/events - Create new event
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Events POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Events POST");
-
     const data = await request.json();
-    console.log("📋 Events POST data:", data);
-
     const event = new Event({
       title: data.title,
+      slug: data.slug,
       description: data.description,
-      startDate: new Date(data.startDate),
-      endDate: data.endDate ? new Date(data.endDate) : undefined,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      content: data.content,
+      featuredImage: data.featuredImage,
+      youtubeUrl: data.youtubeUrl,
+      date: data.date ? new Date(data.date) : new Date(),
+      time: data.time,
       location: data.location,
-      capacity: data.capacity || 0,
+      capacity: data.capacity,
       registered: 0,
-      price: data.price || 0,
+      registrationOpen: data.registrationOpen ?? true,
+      registrationLink: data.registrationLink,
       category: data.category,
       tags: data.tags || [],
       status: data.status || "draft",
-      featured: data.featured || false,
-      image: data.image,
-      registrationDeadline: data.registrationDeadline
-        ? new Date(data.registrationDeadline)
-        : undefined,
-      requirements: data.requirements || [],
-      organizer: data.organizer,
-      contact: data.contact,
+      organizer: data.organizer || { name: "Admin" },
+      seo: data.seo || {},
+      price: data.price,
+      currency: data.currency,
     });
 
     const savedEvent = await event.save();
-    console.log("✅ Event saved successfully:", savedEvent._id);
-
     return NextResponse.json(
       {
         success: true,
@@ -113,15 +96,13 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
-    console.error("❌ Create event error:", error);
-
-    if (error.name === "ValidationError") {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "ValidationError") {
       return NextResponse.json(
         {
           success: false,
           error: "Validation error",
-          details: error.errors,
+          details: (error as any).errors,
         },
         { status: 400 }
       );

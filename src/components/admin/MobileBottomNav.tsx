@@ -19,7 +19,7 @@ export function MobileBottomNav({
   const pathname = usePathname();
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/70 backdrop-blur-xl shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.15)] px-2 py-1 flex justify-around items-stretch"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.15)] px-2 py-1 flex justify-around items-stretch"
       aria-label="Admin mobile navigation"
     >
       {/* Optional menu toggle button */}

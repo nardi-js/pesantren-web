@@ -5,11 +5,7 @@ import Testimonial from "@/models/Testimonial";
 // GET /api/admin/testimonials - Get all testimonials with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Testimonials GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Testimonials GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -43,11 +39,6 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const total = await Testimonial.countDocuments(filter);
-
-    console.log(
-      `✅ Found ${testimonials.length} testimonials, total: ${total}`
-    );
-
     return NextResponse.json({
       success: true,
       data: {
@@ -61,7 +52,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Get testimonials error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch testimonials" },
       { status: 500 }
@@ -72,13 +62,22 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/testimonials - Create new testimonial
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Testimonials POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Testimonials POST");
-
     const data = await request.json();
-    console.log("📋 Testimonials POST data:", data);
+    // Validate content length
+    if (
+      !data.content ||
+      data.content.length < 50 ||
+      data.content.length > 300
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Content must be between 50 and 300 characters",
+        },
+        { status: 400 }
+      );
+    }
 
     const testimonial = new Testimonial({
       name: data.name,
@@ -92,8 +91,6 @@ export async function POST(request: NextRequest) {
     });
 
     const savedTestimonial = await testimonial.save();
-    console.log("✅ Testimonial saved successfully:", savedTestimonial._id);
-
     return NextResponse.json(
       {
         success: true,
@@ -103,8 +100,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("❌ Create testimonial error:", error);
-
     if (error.name === "ValidationError") {
       return NextResponse.json(
         {

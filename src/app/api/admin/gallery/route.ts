@@ -6,11 +6,7 @@ import { handleFileUpload, handleMultipleFileUpload } from "@/lib/upload";
 // GET /api/admin/gallery - Get all gallery items with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Gallery GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Gallery GET");
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -57,11 +53,6 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const total = await Gallery.countDocuments(filter);
-
-    console.log(
-      `✅ Found ${galleryItems.length} gallery items, total: ${total}`
-    );
-
     return NextResponse.json({
       success: true,
       data: {
@@ -75,7 +66,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Get gallery error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch gallery items" },
       { status: 500 }
@@ -86,18 +76,12 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/gallery - Create new gallery item
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Gallery POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Gallery POST");
-
     const contentType = request.headers.get("content-type");
-    
+
     if (contentType?.includes("multipart/form-data")) {
       // Handle FormData with file uploads
       const formData = await request.formData();
-      console.log("📋 FormData received");
-
       // Extract basic data
       const galleryData = {
         title: formData.get("title") as string,
@@ -108,12 +92,35 @@ export async function POST(request: NextRequest) {
         status: (formData.get("status") as string) || "draft",
         featured: (formData.get("featured") as string) === "true",
         coverImage: "", // Will be set after upload
-        items: [] as any[],
-        content: undefined as any,
+        slug: "", // Will be set from title
+        items: [] as Array<{
+          type: "image" | "youtube";
+          url: string;
+          caption?: string;
+          altText?: string;
+          youtubeId?: string;
+          order: number;
+        }>,
+        content: undefined as
+          | {
+              type: "image" | "youtube";
+              url: string;
+              caption?: string;
+              altText?: string;
+              youtubeId?: string;
+            }
+          | undefined,
       };
 
-      console.log("📋 Extracted galleryData:", galleryData);
-
+      // Generate slug from title
+      if (galleryData.title) {
+        galleryData.slug = galleryData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .trim();
+      }
       // Handle cover image upload
       const coverImageFile = formData.get("coverImage") as File;
       if (coverImageFile && coverImageFile.size > 0) {
@@ -152,11 +159,16 @@ export async function POST(request: NextRequest) {
           }
 
           galleryData.content = {
-            type: "image",
+            type: "image" as const,
             url: uploadResult.data!.secure_url,
             caption: formData.get("caption") as string,
             altText: formData.get("altText") as string,
           };
+
+          // Set coverImage to the uploaded image if no cover image was uploaded
+          if (!galleryData.coverImage) {
+            galleryData.coverImage = uploadResult.data!.secure_url;
+          }
         }
       } else if (galleryData.type === "video") {
         // YouTube video
@@ -171,17 +183,24 @@ export async function POST(request: NextRequest) {
           }
 
           galleryData.content = {
-            type: "youtube",
+            type: "youtube" as const,
             url: youtubeUrl,
             youtubeId,
             caption: formData.get("caption") as string,
           };
+
+          // Set coverImage to YouTube thumbnail if no cover image was uploaded
+          if (!galleryData.coverImage) {
+            galleryData.coverImage = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+          }
         }
       } else if (galleryData.type === "album") {
         // Multiple files upload
         const imageFiles = formData.getAll("images") as File[];
-        const youtubeUrls = JSON.parse((formData.get("youtubeUrls") as string) || "[]");
-        
+        const youtubeUrls = JSON.parse(
+          (formData.get("youtubeUrls") as string) || "[]"
+        );
+
         // Upload multiple images
         if (imageFiles.length > 0) {
           const uploadResults = await handleMultipleFileUpload(request, {
@@ -199,10 +218,10 @@ export async function POST(request: NextRequest) {
           }
 
           const imageItems = uploadResults.data!.map((result, index) => ({
-            type: "image",
+            type: "image" as const,
             url: result.secure_url,
-            caption: formData.get(`caption_${index}`) as string || "",
-            altText: formData.get(`altText_${index}`) as string || "",
+            caption: (formData.get(`caption_${index}`) as string) || "",
+            altText: (formData.get(`altText_${index}`) as string) || "",
             order: index,
           }));
 
@@ -210,24 +229,34 @@ export async function POST(request: NextRequest) {
         }
 
         // Add YouTube videos
-        youtubeUrls.forEach((urlData: any, index: number) => {
-          const youtubeId = extractYouTubeId(urlData.url);
-          if (youtubeId) {
-            galleryData.items.push({
-              type: "youtube",
-              url: urlData.url,
-              youtubeId,
-              caption: urlData.caption || "",
-              order: galleryData.items.length + index,
-            });
+        youtubeUrls.forEach(
+          (urlData: { url: string; caption?: string }, index: number) => {
+            const youtubeId = extractYouTubeId(urlData.url);
+            if (youtubeId) {
+              galleryData.items.push({
+                type: "youtube" as const,
+                url: urlData.url,
+                youtubeId,
+                caption: urlData.caption || "",
+                order: galleryData.items.length + index,
+              });
+            }
           }
-        });
+        );
+
+        // Set coverImage to the first item if no cover image was uploaded
+        if (!galleryData.coverImage && galleryData.items.length > 0) {
+          const firstItem = galleryData.items[0];
+          if (firstItem.type === "image") {
+            galleryData.coverImage = firstItem.url;
+          } else if (firstItem.type === "youtube" && firstItem.youtubeId) {
+            galleryData.coverImage = `https://img.youtube.com/vi/${firstItem.youtubeId}/maxresdefault.jpg`;
+          }
+        }
       }
 
       const gallery = new Gallery(galleryData);
       const savedGallery = await gallery.save();
-      console.log("✅ Gallery saved successfully:", savedGallery._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -239,7 +268,15 @@ export async function POST(request: NextRequest) {
     } else {
       // Handle JSON data (for YouTube-only items)
       const data = await request.json();
-      console.log("📋 JSON data received:", data);
+      // Generate slug if not provided
+      if (!data.slug && data.title) {
+        data.slug = data.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .trim();
+      }
 
       if (data.type === "video" && data.youtubeUrl) {
         const youtubeId = extractYouTubeId(data.youtubeUrl);
@@ -256,12 +293,15 @@ export async function POST(request: NextRequest) {
           youtubeId,
           caption: data.caption,
         };
+
+        // Set coverImage to YouTube thumbnail if not provided
+        if (!data.coverImage) {
+          data.coverImage = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+        }
       }
 
       const gallery = new Gallery(data);
       const savedGallery = await gallery.save();
-      console.log("✅ Gallery saved successfully:", savedGallery._id);
-
       return NextResponse.json(
         {
           success: true,
@@ -272,7 +312,6 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("❌ Create gallery error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to create gallery item" },
       { status: 500 }

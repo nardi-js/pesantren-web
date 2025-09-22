@@ -5,21 +5,20 @@ import { Types } from "mongoose";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log("🔍 Campaign GET by ID API called:", params.id);
-
+    const { id } = await params;
     await connectDB();
 
-    if (!Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: "Invalid campaign ID" },
         { status: 400 }
       );
     }
 
-    const campaign = await DonationCampaign.findById(params.id).lean();
+    const campaign = await DonationCampaign.findById(id).lean();
 
     if (!campaign) {
       return NextResponse.json(
@@ -27,15 +26,11 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    console.log("✅ Campaign found");
-
     return NextResponse.json({
       success: true,
       data: campaign,
     });
   } catch (error) {
-    console.error("❌ Campaign GET error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -49,14 +44,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log("🔍 Campaign PUT API called:", params.id);
-
+    const { id } = await params;
     await connectDB();
 
-    if (!Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: "Invalid campaign ID" },
         { status: 400 }
@@ -64,16 +58,13 @@ export async function PUT(
     }
 
     const body = await request.json();
-    console.log("📝 Campaign update data:", body);
-
     // Remove fields that shouldn't be updated directly
     const { ...updateData } = body;
 
-    const campaign = await DonationCampaign.findByIdAndUpdate(
-      params.id,
-      updateData,
-      { new: true, runValidators: true }
-    ).lean();
+    const campaign = await DonationCampaign.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    }).lean();
 
     if (!campaign) {
       return NextResponse.json(
@@ -81,17 +72,12 @@ export async function PUT(
         { status: 404 }
       );
     }
-
-    console.log("✅ Campaign updated");
-
     return NextResponse.json({
       success: true,
       data: campaign,
       message: "Campaign updated successfully",
     });
   } catch (error) {
-    console.error("❌ Campaign PUT error:", error);
-
     if (error instanceof Error && error.message.includes("duplicate key")) {
       return NextResponse.json(
         {
@@ -115,21 +101,20 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log("🔍 Campaign DELETE API called:", params.id);
-
+    const { id } = await params;
     await connectDB();
 
-    if (!Types.ObjectId.isValid(params.id)) {
+    if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, error: "Invalid campaign ID" },
         { status: 400 }
       );
     }
 
-    const campaign = await DonationCampaign.findByIdAndDelete(params.id);
+    const campaign = await DonationCampaign.findByIdAndDelete(id);
 
     if (!campaign) {
       return NextResponse.json(
@@ -137,15 +122,11 @@ export async function DELETE(
         { status: 404 }
       );
     }
-
-    console.log("✅ Campaign deleted:", params.id);
-
     return NextResponse.json({
       success: true,
       message: "Campaign deleted successfully",
     });
   } catch (error) {
-    console.error("❌ Campaign DELETE error:", error);
     return NextResponse.json(
       {
         success: false,
