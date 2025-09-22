@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }
@@ -81,11 +81,10 @@ export async function POST(request: NextRequest) {
       const formData = await request.formData();
 
       // Log received form data for debugging
-      for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-        } else {
-        }
-      }
+      // Iterate formData keys for potential debugging (disabled to avoid unused vars)
+      // for (const [key, value] of formData.entries()) {
+      //   console.debug('field', key, value instanceof File ? 'File' : value);
+      // }
 
       // Extract news data
       const newsData: Partial<INews> = {

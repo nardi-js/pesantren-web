@@ -27,7 +27,7 @@ function Hero() {
           Hubungi Kami
         </h1>
         <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-medium animate-fade-up animation-delay-100 leading-relaxed">
-          Kami siap membantu—silakan kirim pesan atau hubungi kontak resmi di
+          Kami siap membantu, silakan kirim pesan atau hubungi kontak resmi di
           bawah
         </p>
       </div>
@@ -49,7 +49,9 @@ function ContactSection() {
           </div>
           <ContactForm />
         </div>
+
         <aside className="space-y-10 animate-fade-up animation-delay-100">
+          {/* Lokasi */}
           <div className="rounded-2xl surface-card elevated p-6 space-y-5">
             <h3 className="text-sm font-semibold tracking-wide uppercase text-[hsl(var(--foreground-muted))]">
               Lokasi
@@ -58,26 +60,65 @@ function ContactSection() {
               <iframe
                 title="Lokasi Pesantren"
                 className="w-full h-full"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.0024956283007!2d110.369489!3d-7.887789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2zN8KwNTMnMTYuMCJTIDExMMKwMjInMDkuOSJF!5e0!3m2!1sid!2sid!4v0000000000000"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1982.4517268207744!2d107.3853!3d-6.6412!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMzgnMjguMyJTIDEwN8KwMjMnMDcuMSJF!5e0!3m2!1sen!2sid!4v0000000000000"
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
             </div>
           </div>
+
+          {/* Kontak */}
           <div className="rounded-2xl surface-card elevated p-6 space-y-4">
             <h3 className="text-sm font-semibold tracking-wide uppercase text-[hsl(var(--foreground-muted))]">
               Kontak
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <strong>Telepon:</strong> 0812-3456-7890
+                <strong>Email:</strong>{" "}
+                <a
+                  href="mailto:iebs.gcni@gmail.com"
+                  className="text-sky-600 dark:text-sky-400 hover:underline"
+                >
+                  iebs.gcni@gmail.com
+                </a>
               </li>
               <li>
-                <strong>Email:</strong> info@pesantren.or.id
+                <strong>Instagram:</strong>{" "}
+                <a
+                  href="https://instagram.com/pm.gcni_iebs"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-600 dark:text-pink-400 hover:underline"
+                >
+                  @pm.gcni_iebs
+                </a>
               </li>
               <li>
-                <strong>Alamat:</strong> Jl. Pendidikan No. 123, Kota Ilmu
+                <strong>YouTube:</strong>{" "}
+                <a
+                  href="https://youtube.com/@GCNI_TV"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-600 dark:text-red-400 hover:underline"
+                >
+                  GCNI_TV
+                </a>
+              </li>
+              <li>
+                <strong>TikTok:</strong>{" "}
+                <a
+                  href="https://www.tiktok.com/@gcni_tv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-black dark:text-white hover:underline"
+                >
+                  @gcni_tv
+                </a>
+              </li>
+              <li>
+                <strong>Alamat:</strong> Kampung Tegalsapi, Neglasari, Kec.
+                Darangdan, Kabupaten Purwakarta, Jawa Barat 41163, Indonesia
               </li>
               <li>
                 <strong>Jam Layanan:</strong> 08:00 - 16:00 WIB

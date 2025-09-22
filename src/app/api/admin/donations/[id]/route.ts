@@ -11,10 +11,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    console.log("🔍 Donation GET by ID API called:", params.id);
-
     await connectDB();
-    console.log("✅ Database connected for Donation GET by ID");
 
     if (!mongoose.Types.ObjectId.isValid(params.id)) {
       return NextResponse.json(
@@ -31,8 +28,6 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    console.log("✅ Donation found:", donation._id);
 
     return NextResponse.json({
       success: true,
@@ -53,10 +48,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    console.log("📝 Donation PUT API called:", params.id);
-
     await connectDB();
-    console.log("✅ Database connected for Donation PUT");
 
     if (!mongoose.Types.ObjectId.isValid(params.id)) {
       return NextResponse.json(
@@ -66,11 +58,9 @@ export async function PUT(
     }
 
     const data = await request.json();
-    console.log("📋 Donation PUT data:", data);
 
     // Check if data is empty
     if (!data || Object.keys(data).length === 0) {
-      console.error("❌ Empty data received");
       return NextResponse.json(
         { success: false, error: "No data provided" },
         { status: 400 }
@@ -104,7 +94,6 @@ export async function PUT(
       donation.receiptNumber = data.receiptNumber;
 
     const updatedDonation = await donation.save();
-    console.log("✅ Donation updated successfully:", updatedDonation._id);
 
     return NextResponse.json({
       success: true,
@@ -112,8 +101,6 @@ export async function PUT(
       message: "Donation updated successfully",
     });
   } catch (error: unknown) {
-    console.error("❌ Update donation error:", error);
-
     if (
       error &&
       typeof error === "object" &&
@@ -143,10 +130,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    console.log("🗑️ Donation DELETE API called:", params.id);
-
     await connectDB();
-    console.log("✅ Database connected for Donation DELETE");
 
     if (!mongoose.Types.ObjectId.isValid(params.id)) {
       return NextResponse.json(
@@ -164,14 +148,11 @@ export async function DELETE(
       );
     }
 
-    console.log("✅ Donation deleted successfully:", params.id);
-
     return NextResponse.json({
       success: true,
       message: "Donation deleted successfully",
     });
-  } catch (error) {
-    console.error("❌ Delete donation error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete donation" },
       { status: 500 }

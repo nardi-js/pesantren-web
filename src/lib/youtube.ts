@@ -23,12 +23,22 @@ export function extractYouTubeVideoId(url: string): string | null {
   return null;
 }
 
-// Generate YouTube thumbnail URL
+// Generate YouTube thumbnail URL with fallback
 export function getYouTubeThumbnail(
   videoId: string,
   quality: "default" | "medium" | "high" | "standard" | "maxres" = "medium"
 ): string {
-  return `https://img.youtube.com/vi/${videoId}/${quality}default.jpg`;
+  // Map quality to correct YouTube thumbnail names
+  const qualityMap = {
+    default: "default", // 120x90
+    medium: "mqdefault", // 320x180
+    high: "hqdefault", // 480x360
+    standard: "sddefault", // 640x480
+    maxres: "maxresdefault", // 1280x720
+  };
+
+  const thumbnailQuality = qualityMap[quality];
+  return `https://img.youtube.com/vi/${videoId}/${thumbnailQuality}.jpg`;
 }
 
 // Generate YouTube embed URL

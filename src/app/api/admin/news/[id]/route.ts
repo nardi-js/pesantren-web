@@ -38,7 +38,7 @@ export async function GET(
       success: true,
       data: news,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch news" },
       { status: 500 }
@@ -101,8 +101,7 @@ export async function PUT(
             if (publicId) {
               await cloudinary.uploader.destroy(`pesantren/news/${publicId}`);
             }
-          } catch (error) {
-          }
+          } catch {}
         }
 
         // Upload new image
@@ -244,8 +243,7 @@ export async function DELETE(
         if (publicId) {
           await cloudinary.uploader.destroy(`pesantren/news/${publicId}`);
         }
-      } catch (error) {
-      }
+      } catch {}
     }
 
     // Delete news from database
@@ -255,7 +253,7 @@ export async function DELETE(
       success: true,
       message: "News deleted successfully",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete news" },
       { status: 500 }

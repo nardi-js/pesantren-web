@@ -4,29 +4,22 @@ import { DonationCampaign } from "@/models/Donation";
 
 export async function GET() {
   try {
-    console.log("🔍 Campaigns GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Campaigns GET");
 
     const campaigns = await DonationCampaign.find()
       .sort({ createdAt: -1 })
       .lean();
-
-    console.log(`✅ Found ${campaigns.length} campaigns`);
 
     return NextResponse.json({
       success: true,
       data: campaigns,
       total: campaigns.length,
     });
-  } catch (error) {
-    console.error("❌ Campaigns GET error:", error);
+  } catch {
     return NextResponse.json(
       {
         success: false,
         error: "Failed to fetch campaigns",
-        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
@@ -35,13 +28,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("🔍 Campaigns POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Campaigns POST");
 
     const body = await request.json();
-    console.log("📝 Campaign data received:", body);
 
     // Validate required fields
     const requiredFields = [
@@ -78,8 +67,6 @@ export async function POST(request: NextRequest) {
     const campaign = new DonationCampaign(body);
     const savedCampaign = await campaign.save();
 
-    console.log("✅ Campaign created:", savedCampaign._id);
-
     return NextResponse.json(
       {
         success: true,
@@ -89,8 +76,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("❌ Campaigns POST error:", error);
-
     if (error instanceof Error && error.message.includes("duplicate key")) {
       return NextResponse.json(
         {

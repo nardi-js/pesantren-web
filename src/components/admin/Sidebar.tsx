@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { adminNavItems } from "./navConfig";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -24,6 +24,8 @@ export function Sidebar({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const firstFocusable = useRef<HTMLElement | null>(null);
   const lastFocusable = useRef<HTMLElement | null>(null);
+
+  const [scrolled, setScrolled] = useState(false);
 
   const handleKey = useCallback(
     (e: KeyboardEvent) => {
@@ -68,6 +70,18 @@ export function Sidebar({
     onCloseAction();
   }, [pathname, onCloseAction]);
 
+  // Track scroll within sidebar to show subtle inner shadow when content scrolls
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      setScrolled(el.scrollTop > 4);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [open, collapsed]);
+
   return (
     <div className="h-full">
       {/* Mobile overlay */}
@@ -85,14 +99,21 @@ export function Sidebar({
         ref={panelRef}
         className={`group fixed z-40 inset-y-0 left-0 flex flex-col will-change-transform ${
           collapsed ? "w-[4.75rem]" : "w-64"
-        } border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-sky-900/10 lg:translate-x-0 transform transition-[width,transform] duration-300 ease-out ${
+        } border-r border-slate-200/70 dark:border-slate-800/70 backdrop-blur-xl bg-white/70 dark:bg-slate-900/60 supports-[backdrop-filter]:bg-white/55 dark:supports-[backdrop-filter]:bg-slate-900/50 shadow-xl shadow-sky-900/10 lg:translate-x-0 transform transition-[width,transform,background-color] duration-300 ease-out ${
           open ? "translate-x-0" : "-translate-x-full"
-        } lg:static lg:shadow-none h-screen`}
+        } lg:sticky top-0 lg:h-screen h-screen overflow-hidden`}
         aria-label="Sidebar navigation"
         data-collapsed={collapsed || undefined}
+        data-scrolled={scrolled || undefined}
       >
         {/* Header */}
-        <div className="h-16 flex items-center justify-between gap-2 px-4 border-b border-slate-200/80 dark:border-slate-800/80">
+        <div
+          className={`h-16 flex items-center justify-between gap-2 px-4 border-b border-slate-200/80 dark:border-slate-800/80 relative ${
+            scrolled
+              ? "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-sky-500/40 after:to-transparent"
+              : ""
+          }`}
+        >
           <div className="flex flex-col overflow-hidden">
             <span
               className={`font-semibold tracking-wide bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent transition-colors ${
@@ -144,7 +165,7 @@ export function Sidebar({
         <nav
           className={`flex-1 overflow-y-auto py-4 ${
             collapsed ? "px-2" : "px-3"
-          } space-y-1 custom-scrollbars pr-2`}
+          } space-y-1 custom-scrollbars pr-2 scroll-smooth`}
           aria-label="Primary"
         >
           {adminNavItems.map((item) => {

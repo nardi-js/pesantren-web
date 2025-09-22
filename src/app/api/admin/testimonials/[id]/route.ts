@@ -142,7 +142,7 @@ export async function DELETE(
       success: true,
       message: "Testimonial deleted successfully",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete testimonial" },
       { status: 500 }

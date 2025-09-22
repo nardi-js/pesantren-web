@@ -28,7 +28,7 @@ export async function GET(
       success: true,
       data: galleryItem,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch gallery item" },
       { status: 500 }
@@ -213,7 +213,7 @@ export async function PUT(
         message: "Gallery item updated successfully",
       });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update gallery item" },
       { status: 500 }
@@ -275,7 +275,7 @@ export async function DELETE(
       success: true,
       message: "Gallery item deleted successfully",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to delete gallery item" },
       { status: 500 }

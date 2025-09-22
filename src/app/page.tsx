@@ -1,6 +1,7 @@
 import Hero from "../components/Hero";
 import { NewsHighlight } from "../components/NewsHighlight";
 import { GalleryPreview } from "../components/GalleryPreview";
+import { FacilitiesPreview } from "../components/FacilitiesPreview";
 import TestimonialsCarousel from "../components/TestimonialsCarousel";
 import SiteLayout from "@/components/SiteLayout";
 import Providers from "@/components/Providers";
@@ -17,6 +18,7 @@ export default function Home() {
           />
           <NewsHighlight />
           <GalleryPreview />
+          <FacilitiesPreview />
           <TestimonialsCarousel />
         </main>
       </SiteLayout>

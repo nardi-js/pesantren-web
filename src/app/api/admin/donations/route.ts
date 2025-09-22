@@ -7,10 +7,7 @@ const { Donation } = DonationModels;
 // GET /api/admin/donations - Get all donations with pagination and filtering
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔍 Donations GET API called");
-
     await connectDB();
-    console.log("✅ Database connected for Donations GET");
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
@@ -51,8 +48,6 @@ export async function GET(request: NextRequest) {
     // Get total count
     const total = await Donation.countDocuments(filter);
 
-    console.log(`✅ Found ${donations.length} donations, total: ${total}`);
-
     return NextResponse.json({
       success: true,
       data: {
@@ -77,17 +72,12 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/donations - Create new donation
 export async function POST(request: NextRequest) {
   try {
-    console.log("📝 Donations POST API called");
-
     await connectDB();
-    console.log("✅ Database connected for Donations POST");
 
     const data = await request.json();
-    console.log("📋 Donations POST data:", data);
 
     // Check if data is empty or missing required fields
     if (!data || Object.keys(data).length === 0) {
-      console.error("❌ Empty data received");
       return NextResponse.json(
         { success: false, error: "No data provided" },
         { status: 400 }
@@ -125,10 +115,7 @@ export async function POST(request: NextRequest) {
       receiptNumber: data.receiptNumber || `DN-${Date.now()}`,
     });
 
-    console.log("📋 Processed donation data for saving:", donation.toObject());
-
     const savedDonation = await donation.save();
-    console.log("✅ Donation saved successfully:", savedDonation._id);
 
     return NextResponse.json(
       {
@@ -139,8 +126,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("❌ Create donation error:", error);
-
     if (
       error &&
       typeof error === "object" &&

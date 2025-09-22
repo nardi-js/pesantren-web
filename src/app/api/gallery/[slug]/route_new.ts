@@ -8,9 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    console.log("🔍 Public Gallery Detail GET API called");
     await connectDB();
-    console.log("✅ Database connected for Public Gallery Detail GET");
 
     const { slug } = await params;
 
@@ -28,14 +26,11 @@ export async function GET(
       );
     }
 
-    console.log(`✅ Found gallery item`);
-
     return NextResponse.json({
       success: true,
       data: galleryItem,
     });
-  } catch (error) {
-    console.error("❌ Get public gallery item error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to fetch gallery item" },
       { status: 500 }

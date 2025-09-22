@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AcademicCapIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Section } from "../../../components/Section";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Profil Pesantren",
@@ -21,25 +22,49 @@ const facilities = [
     id: 1,
     title: "Perpustakaan",
     desc: "Koleksi buku islami & referensi modern.",
-    img: "https://source.unsplash.com/400x300/?library",
+    img: "../../../../Perpustakaan.jpg",
   },
   {
     id: 2,
-    title: "Lab Komputer",
-    desc: "Fasilitas teknologi untuk pembelajaran digital.",
-    img: "https://source.unsplash.com/400x300/?computer,lab",
+    title: "Canten",
+    desc: "Tempat makan & istirahat santri.",
+    img: "../../../../CanteenPondok.jpg",
   },
   {
     id: 3,
     title: "Masjid",
     desc: "Pusat kegiatan ibadah & pembinaan ruhiyah.",
-    img: "https://source.unsplash.com/400x300/?mosque,interior",
+    img: "../../../../Masjid.jpg",
   },
   {
     id: 4,
     title: "Asrama",
     desc: "Lingkungan tempat tinggal yang nyaman & teratur.",
-    img: "https://source.unsplash.com/400x300/?dormitory",
+    img: "../../../../asrama.jpg",
+  },
+  {
+    id: 5,
+    title: "Lapangan Olahraga",
+    desc: "Fasilitas olahraga untuk kesehatan jasmani.",
+    img: "../../../../Lapangan.jpg",
+  },
+  {
+    id: 6,
+    title: "Gazebo",
+    desc: "Tempat bersantai & diskusi santai.",
+    img: "../../../../Gazebo.jpg",
+  },
+  {
+    id: 7,
+    title: "Meeting Room",
+    desc: "Ruang pertemuan & diskusi kelompok.",
+    img: "../../../../MeetingRoom.jpg",
+  },
+  {
+    id: 8,
+    title: "Ruang Kelas",
+    desc: "Kelas modern dengan teknologi pendukung.",
+    img: "../../../../RuangKelas.jpg",
   },
 ];
 
@@ -63,20 +88,16 @@ export default function ProfilePage() {
       </section>
 
       {/* About Us */}
-      <Section variant="base" className="-mt-8">
-        <div className="grid gap-12 md:gap-16 md:grid-cols-2 items-center">
-          <div className="relative h-72 md:h-96 rounded-xl overflow-hidden bg-gradient-to-br from-emerald-100 via-sky-100 to-emerald-100 dark:from-emerald-900/20 dark:via-sky-900/20 dark:to-emerald-900/20 border border-emerald-200/50 dark:border-emerald-700/30 animate-zoom-in">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-sky-500/10 to-emerald-500/10 dark:from-emerald-400/5 dark:via-sky-400/5 dark:to-emerald-400/5" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-2">
-                <AcademicCapIcon className="w-16 h-16 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                  Santri Belajar
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-6 animate-fade-up">
+      <Section variant="base" className="pt-12 md:pt-16">
+        <div className="grid gap-10 md:gap-14 md:grid-cols-2 items-center">
+          <Image
+            height={64}
+            width={64}
+            src="../../../../logo.svg"
+            alt="Logo"
+            className=" md:w-80 md:h-80 rounded-full object-cover mx-auto shadow-lg"
+          />
+          <div className="space-y-6 animate-fade-up md:mt-4">
             <h2 className="heading-sm md:heading-md text-[hsl(var(--foreground))]">
               Tentang Kami
             </h2>
@@ -108,6 +129,7 @@ export default function ProfilePage() {
       {/* Visi & Misi */}
       <Section variant="alt">
         <div className="grid gap-8 md:grid-cols-2">
+          {/* Visi */}
           <div className="group surface-card elevated hoverable p-8 rounded-xl relative overflow-hidden animate-fade-up">
             <div className="flex items-start gap-4">
               <div className="h-12 w-12 rounded-lg bg-sky-600/10 dark:bg-sky-400/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
@@ -116,13 +138,27 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <h3 className="font-semibold text-lg tracking-tight">Visi</h3>
                 <p className="text-soft text-sm leading-relaxed max-w-md">
-                  Menjadi pesantren unggulan yang melahirkan generasi
-                  berkarakter Qur&apos;ani, berilmu luas, dan berkontribusi bagi
-                  peradaban.
+                  Terbentuknya santripreneur berjiwa leader dengan 3 karakter:
                 </p>
+                <ul className="list-disc list-inside text-soft text-sm leading-relaxed space-y-1">
+                  <li>
+                    <span className="font-semibold">Morality:</span> Aqidah
+                    Salimah & Ibadah Shohihah
+                  </li>
+                  <li>
+                    <span className="font-semibold">Intelectuality:</span>{" "}
+                    Syumuliyyatul Fahm & Wasatiyyatul Fikr
+                  </li>
+                  <li>
+                    <span className="font-semibold">Responsibility:</span>{" "}
+                    Mandiri Ekonomi & Nafiun Lighoirihi
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
+
+          {/* Misi */}
           <div className="group surface-card elevated hoverable p-8 rounded-xl relative overflow-hidden animate-fade-up animation-delay-100">
             <div className="flex items-start gap-4">
               <div className="h-12 w-12 rounded-lg bg-sky-600/10 dark:bg-sky-400/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
@@ -131,9 +167,10 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <h3 className="font-semibold text-lg tracking-tight">Misi</h3>
                 <p className="text-soft text-sm leading-relaxed max-w-md">
-                  1) Menanamkan kecintaan Al-Qur&apos;an. 2) Mengembangkan
-                  kompetensi akademik & teknologi. 3) Membentuk kepemimpinan dan
-                  kemandirian. 4) Menguatkan karakter akhlakul karimah.
+                  Menyelenggarakan proses pendidikan Islami yang komprehensif
+                  dan universal, informatif dan kontributif, yang berbasis
+                  Islamic Entrepreneurship untuk kemajuan bangsa Indonesia dan
+                  umat Islam dunia.
                 </p>
               </div>
             </div>
@@ -198,9 +235,18 @@ export default function ProfilePage() {
                   : "animation-delay-0"
               }`}
             >
-              <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-emerald-100 via-sky-100 to-emerald-100 dark:from-emerald-900/20 dark:via-sky-900/20 dark:to-emerald-900/20 flex items-center justify-center">
-                <SparklesIcon className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+              {/* Gambar fasilitas */}
+              <div className="relative h-40 w-full overflow-hidden">
+                <img
+                  src={f.img}
+                  alt={f.title}
+                  className="h-full w-full object-cover"
+                />
+                {/* Overlay gradasi tipis biar teks tetap kebaca */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
               </div>
+
+              {/* Konten fasilitas */}
               <div className="p-5 space-y-2">
                 <h3 className="font-semibold text-sm tracking-wide text-[hsl(var(--foreground))]">
                   {f.title}

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { getYouTubeThumbnail } from "@/lib/youtube";
 
 interface GalleryItem {
   _id: string;
@@ -204,68 +205,112 @@ export default function GalleryClient() {
         </div>
       ) : galleryItems.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {galleryItems.map((item, index) => (
-            <div
-              key={item._id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
-              onClick={() =>
-                item.type === "image" ? openLightbox(index) : undefined
+          {galleryItems.map((item, index) => {
+            // Determine image source - use YouTube thumbnail for videos
+            const getImageSrc = () => {
+              // Try multiple ways to get YouTube ID for video items
+              let youtubeId = null;
+
+              // Method 1: Check content.youtubeId
+              if (item.content?.youtubeId) {
+                youtubeId = item.content.youtubeId;
               }
-            >
-              <div className="relative w-full h-48 overflow-hidden">
-                <Image
-                  src={item.coverImage}
-                  alt={item.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                  {getTypeIcon(item.type)}{" "}
-                  {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                </div>
-                {item.featured && (
-                  <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs">
-                    ⭐ Featured
+              // Method 2: Check if items array has youtube content (for albums)
+              else if (item.items && item.items.length > 0) {
+                const youtubeItem = item.items.find(
+                  (i) => i.type === "youtube" && i.youtubeId
+                );
+                if (youtubeItem) {
+                  youtubeId = youtubeItem.youtubeId;
+                }
+              }
+              // Method 3: Extract from coverImage if it's already a YouTube thumbnail
+              else if (
+                item.type === "video" &&
+                item.coverImage?.includes("img.youtube.com")
+              ) {
+                return item.coverImage;
+              }
+
+              // If we found a YouTube ID, generate thumbnail URL
+              if (youtubeId && item.type === "video") {
+                return getYouTubeThumbnail(youtubeId, "high");
+              }
+
+              // Fallback to original coverImage
+              return item.coverImage;
+            };
+
+            return (
+              <div
+                key={item._id}
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
+                onClick={() =>
+                  item.type === "image" ? openLightbox(index) : undefined
+                }
+              >
+                <div className="relative w-full h-48 overflow-hidden">
+                  <Image
+                    src={getImageSrc()}
+                    alt={item.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      // Fallback if YouTube thumbnail fails
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== item.coverImage && item.coverImage) {
+                        target.src = item.coverImage;
+                      }
+                    }}
+                  />
+                  <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                    {getTypeIcon(item.type)}{" "}
+                    {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                   </div>
-                )}
-                {item.type === "video" && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/80 rounded-full p-3">
-                      <svg
-                        className="w-8 h-8 text-gray-800"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
+                  {item.featured && (
+                    <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs">
+                      ⭐ Featured
                     </div>
+                  )}
+                  {item.type === "video" && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-white/80 rounded-full p-3">
+                        <svg
+                          className="w-8 h-8 text-gray-800"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-2">
+                    {item.description}
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                    <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                      {item.category}
+                    </span>
+                    <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                   </div>
+                </div>
+                {item.type === "video" && (
+                  <Link
+                    href={`/gallery/${item.slug}`}
+                    className="block w-full bg-blue-600 text-white text-center py-2 hover:bg-blue-700 transition-colors"
+                  >
+                    Watch Video
+                  </Link>
                 )}
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-2">
-                  {item.description}
-                </p>
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                  <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                    {item.category}
-                  </span>
-                  <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-              {item.type === "video" && (
-                <Link
-                  href={`/gallery/${item.slug}`}
-                  className="block w-full bg-blue-600 text-white text-center py-2 hover:bg-blue-700 transition-colors"
-                >
-                  Watch Video
-                </Link>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="text-center py-12">
