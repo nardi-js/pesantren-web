@@ -109,7 +109,14 @@ export async function generateStaticParams() {
 
 export default async function NewsDetailPage({ params }: NewsDetailProps) {
   const { slug } = await params;
-  const news = await getNewsData(slug);
+
+  let news: NewsItem | null = null;
+  try {
+    news = await getNewsData(slug);
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    return notFound();
+  }
 
   if (!news) {
     return notFound();
@@ -119,12 +126,12 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
   const relatedNews = news.relatedNews || [];
 
   return (
-    <div className="section-base pt-28 md:pt-32 pb-16">
+    <div className="section-base pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-12 sm:pb-16">
       <div className="app-container">
-        <div className="grid md:grid-cols-[1fr_300px] gap-12 lg:gap-16">
+        <div className="grid md:grid-cols-[1fr_300px] gap-8 lg:gap-12 xl:gap-16">
           {/* Main column */}
           <article className="max-w-3xl mx-auto md:mx-0 animate-fade-up">
-            <div className="relative w-full h-[320px] md:h-[420px] rounded-xl overflow-hidden shadow-md mb-8">
+            <div className="relative w-full h-[240px] sm:h-[320px] md:h-[420px] rounded-xl overflow-hidden shadow-md mb-6 sm:mb-8">
               {news.image ? (
                 <Image
                   src={news.image}
@@ -136,7 +143,7 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-sky-400 to-emerald-400 flex items-center justify-center">
-                  <span className="text-white text-6xl font-bold">
+                  <span className="text-white text-4xl sm:text-6xl font-bold">
                     {news.title.charAt(0)}
                   </span>
                 </div>
@@ -144,57 +151,59 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent" />
             </div>
 
-            <header className="space-y-4 mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold leading-tight tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400">
+            <header className="space-y-4 mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-sky-600 to-emerald-600 dark:from-sky-400 dark:to-emerald-400">
                 {news.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-[hsl(var(--foreground-soft))]">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-[hsl(var(--foreground-soft))]">
                 <span className="inline-flex items-center gap-1">
                   <svg
-                    className="h-4 w-4"
+                    className="h-3 w-3 sm:h-4 sm:w-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4Zm0 0c-4.33 0-8 2.17-8 6v2h16v-2c0-3.83-3.67-6-8-6Z" />
                   </svg>
-                  {news.author.name}
+                  <span className="truncate">{news.author.name}</span>
                 </span>
                 <time
                   className="inline-flex items-center gap-1"
                   dateTime={news.publishedAt || news.createdAt}
                 >
                   <svg
-                    className="h-4 w-4"
+                    className="h-3 w-3 sm:h-4 sm:w-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M8 2v2m8-2v2M3 9h18M5 7h14v13H5z" />
                   </svg>
-                  {new Date(
-                    news.publishedAt || news.createdAt
-                  ).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  <span className="truncate">
+                    {new Date(
+                      news.publishedAt || news.createdAt
+                    ).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
                 </time>
                 <span className="inline-flex items-center gap-1">
                   <svg
-                    className="h-4 w-4"
+                    className="h-3 w-3 sm:h-4 sm:w-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <path d="M4 6h16v12H4z" />
                   </svg>
-                  {news.category}
+                  <span className="truncate">{news.category}</span>
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <svg
-                    className="h-4 w-4"
+                    className="h-3 w-3 sm:h-4 sm:w-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -202,7 +211,7 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
                     <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
-                  {news.views} views
+                  <span className="truncate">{news.views} views</span>
                 </span>
               </div>
             </header>
@@ -212,16 +221,16 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
           </article>
 
           {/* Sidebar */}
-          <aside className="hidden md:block space-y-8 animate-fade-up animation-delay-100">
-            <div className="rounded-xl surface-card elevated p-5">
-              <h2 className="text-sm font-semibold tracking-wide uppercase text-[hsl(var(--foreground-muted))] mb-4">
+          <aside className="space-y-6 md:space-y-8 animate-fade-up animation-delay-100">
+            <div className="rounded-xl surface-card elevated p-4 sm:p-5">
+              <h2 className="text-sm font-semibold tracking-wide uppercase text-[hsl(var(--foreground-muted))] mb-3 sm:mb-4">
                 Berita Terkait
               </h2>
               {relatedNews.length > 0 ? (
-                <ul className="space-y-4">
+                <ul className="space-y-3 sm:space-y-4">
                   {relatedNews.slice(0, 4).map((related) => (
                     <li key={related._id} className="flex gap-3 group">
-                      <div className="relative h-14 w-20 rounded-lg overflow-hidden flex-shrink-0">
+                      <div className="relative h-12 w-16 sm:h-14 sm:w-20 rounded-lg overflow-hidden flex-shrink-0">
                         {related.image ? (
                           <Image
                             src={related.image}
@@ -240,7 +249,7 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
                       </div>
                       <Link
                         href={`/news/${related.slug}`}
-                        className="text-sm font-medium leading-snug text-[hsl(var(--foreground))] hover:text-sky-600 dark:hover:text-sky-300 transition-colors line-clamp-3"
+                        className="text-xs sm:text-sm font-medium leading-snug text-[hsl(var(--foreground))] hover:text-sky-600 dark:hover:text-sky-300 transition-colors line-clamp-3 min-w-0 flex-1"
                       >
                         {related.title}
                       </Link>
@@ -255,13 +264,13 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
             </div>
 
             {/* Category info */}
-            <div className="rounded-xl surface-card elevated p-5">
-              <h2 className="text-sm font-semibold tracking-wide uppercase text-[hsl(var(--foreground-muted))] mb-4">
+            <div className="rounded-xl surface-card elevated p-4 sm:p-5">
+              <h2 className="text-sm font-semibold tracking-wide uppercase text-[hsl(var(--foreground-muted))] mb-3 sm:mb-4">
                 Kategori
               </h2>
               <Link
                 href={`/news?category=${news.category}`}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 text-sm font-medium hover:bg-sky-200 dark:hover:bg-sky-900/60 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 text-xs sm:text-sm font-medium hover:bg-sky-200 dark:hover:bg-sky-900/60 transition-colors"
               >
                 <span>{getCategoryIcon(news.category)}</span>
                 {getCategoryTitle(news.category)}
@@ -277,10 +286,20 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
 // News Content Component
 function NewsContent({ content }: { content: string }) {
   return (
-    <div className="prose prose-sky prose-lg dark:prose-invert max-w-none leading-relaxed space-y-6 animate-fade-up animation-delay-50">
+    <div className="prose prose-sky prose-sm sm:prose-lg dark:prose-invert max-w-none leading-relaxed space-y-4 sm:space-y-6 animate-fade-up animation-delay-50">
       <div
         dangerouslySetInnerHTML={{ __html: content }}
-        className="[&>h2]:text-2xl [&>h2]:font-bold [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>ul]:mb-4 [&>ol]:mb-4 [&>blockquote]:border-l-4 [&>blockquote]:border-sky-500 [&>blockquote]:pl-4 [&>blockquote]:italic"
+        className="
+          [&>h2]:text-xl [&>h2]:sm:text-2xl [&>h2]:font-bold [&>h2]:mt-6 [&>h2]:sm:mt-8 [&>h2]:mb-3 [&>h2]:sm:mb-4
+          [&>h3]:text-lg [&>h3]:sm:text-xl [&>h3]:font-semibold [&>h3]:mt-4 [&>h3]:sm:mt-6 [&>h3]:mb-2 [&>h3]:sm:mb-3
+          [&>p]:mb-3 [&>p]:sm:mb-4 [&>p]:text-sm [&>p]:sm:text-base [&>p]:leading-relaxed
+          [&>ul]:mb-3 [&>ul]:sm:mb-4 [&>ol]:mb-3 [&>ol]:sm:mb-4
+          [&>blockquote]:border-l-4 [&>blockquote]:border-sky-500 [&>blockquote]:pl-3 [&>blockquote]:sm:pl-4 [&>blockquote]:italic [&>blockquote]:text-sm [&>blockquote]:sm:text-base
+          [&>img]:rounded-lg [&>img]:shadow-sm [&>img]:my-4 [&>img]:sm:my-6 [&>img]:w-full [&>img]:h-auto
+          [&>table]:text-sm [&>table]:sm:text-base [&>table]:w-full [&>table]:overflow-x-auto
+          [&>pre]:text-xs [&>pre]:sm:text-sm [&>pre]:overflow-x-auto [&>pre]:p-3 [&>pre]:sm:p-4
+          [&>code]:text-xs [&>code]:sm:text-sm [&>code]:px-1 [&>code]:py-0.5 [&>code]:rounded [&>code]:bg-slate-100 [&>code]:dark:bg-slate-800
+        "
       />
     </div>
   );
@@ -289,7 +308,7 @@ function NewsContent({ content }: { content: string }) {
 // News Bottom Meta Component
 function NewsBottomMeta({ news }: { news: NewsItem }) {
   return (
-    <div className="mt-14 space-y-10 animate-fade-up animation-delay-100">
+    <div className="mt-10 sm:mt-14 space-y-6 sm:space-y-10 animate-fade-up animation-delay-100">
       {/* Tags */}
       {news.tags && news.tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -297,7 +316,7 @@ function NewsBottomMeta({ news }: { news: NewsItem }) {
             <Link
               key={tag}
               href={`/news?tag=${encodeURIComponent(tag.toLowerCase())}`}
-              className="px-4 py-1.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 ring-1 ring-sky-200/60 dark:ring-sky-700/40 hover:bg-sky-200 dark:hover:bg-sky-900/60 transition-colors"
+              className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 ring-1 ring-sky-200/60 dark:ring-sky-700/40 hover:bg-sky-200 dark:hover:bg-sky-900/60 transition-colors"
             >
               {tag}
             </Link>
@@ -306,34 +325,36 @@ function NewsBottomMeta({ news }: { news: NewsItem }) {
       )}
 
       {/* Share */}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
         <span className="text-sm font-medium text-[hsl(var(--foreground-soft))]">
           Bagikan:
         </span>
-        <ShareButton
-          network="facebook"
-          url={`${
-            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003"
-          }/news/${news.slug}`}
-        />
-        <ShareButton
-          network="twitter"
-          url={`${
-            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003"
-          }/news/${news.slug}`}
-          title={news.title}
-        />
-        <ShareButton
-          network="whatsapp"
-          url={`${
-            process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003"
-          }/news/${news.slug}`}
-          title={news.title}
-        />
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <ShareButton
+            network="facebook"
+            url={`${
+              process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003"
+            }/news/${news.slug}`}
+          />
+          <ShareButton
+            network="twitter"
+            url={`${
+              process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003"
+            }/news/${news.slug}`}
+            title={news.title}
+          />
+          <ShareButton
+            network="whatsapp"
+            url={`${
+              process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003"
+            }/news/${news.slug}`}
+            title={news.title}
+          />
+        </div>
       </div>
 
       {/* Back to News */}
-      <div className="pt-6 border-t border-[hsl(var(--divider))]">
+      <div className="pt-4 sm:pt-6 border-t border-[hsl(var(--divider))]">
         <Link
           href="/news"
           className="inline-flex items-center gap-2 text-sm font-semibold text-sky-600 hover:text-sky-700 dark:text-sky-300 dark:hover:text-sky-200 transition-colors"
@@ -398,11 +419,11 @@ function ShareButton({
       href={cfg.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 transition-colors"
+      className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 transition-colors"
       aria-label={`Bagikan ke ${cfg.label}`}
     >
       {cfg.icon}
-      {cfg.label}
+      <span className="hidden sm:inline">{cfg.label}</span>
     </a>
   );
 }

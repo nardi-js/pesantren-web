@@ -277,6 +277,7 @@ export function extractPublicIdFromUrl(url: string): string | null {
 
     return publicId;
   } catch (error) {
+    console.error("Error extracting public ID from URL:", error);
     return null;
   }
 }
