@@ -130,6 +130,7 @@ export default function NewGalleryPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Information */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
             Basic Information
