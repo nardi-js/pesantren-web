@@ -93,6 +93,8 @@ export async function POST(request: NextRequest) {
         featured: (formData.get("featured") as string) === "true",
         coverImage: "", // Will be set after upload
         slug: "", // Will be set from title
+        viewCount: 0,
+        seo: {},
         items: [] as Array<{
           type: "image" | "youtube";
           url: string;
@@ -112,25 +114,53 @@ export async function POST(request: NextRequest) {
           | undefined,
       };
 
-      // Generate slug from title
+      // Generate unique slug from title
       if (galleryData.title) {
-        galleryData.slug = galleryData.title
+        const baseSlug = galleryData.title
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, "")
           .replace(/\s+/g, "-")
           .replace(/-+/g, "-")
           .trim();
+
+        // Check if slug already exists and make it unique
+        let slug = baseSlug;
+        let counter = 1;
+        let existingGallery = await Gallery.findOne({ slug });
+
+        while (existingGallery) {
+          slug = `${baseSlug}-${counter}`;
+          existingGallery = await Gallery.findOne({ slug });
+          counter++;
+        }
+
+        galleryData.slug = slug;
       }
       // Handle cover image upload
       const coverImageFile = formData.get("coverImage") as File;
+      console.log("📸 Cover image file:", {
+        exists: !!coverImageFile,
+        name: coverImageFile?.name,
+        size: coverImageFile?.size,
+        type: coverImageFile?.type,
+      });
+
       if (coverImageFile && coverImageFile.size > 0) {
+        console.log("⬆️ Uploading cover image to Cloudinary...");
         const uploadResult = await handleFileUpload(request, {
           fieldName: "coverImage",
           folder: "pesantren/gallery/covers",
           tags: ["gallery", "cover"],
         });
 
+        console.log("📤 Cover image upload result:", {
+          success: uploadResult.success,
+          hasData: !!uploadResult.data,
+          error: uploadResult.error,
+        });
+
         if (!uploadResult.success) {
+          console.error("❌ Cover image upload failed:", uploadResult.error);
           return NextResponse.json(
             { success: false, error: uploadResult.error },
             { status: 400 }
@@ -138,6 +168,10 @@ export async function POST(request: NextRequest) {
         }
 
         galleryData.coverImage = uploadResult.data!.secure_url;
+        console.log(
+          "✅ Cover image uploaded successfully:",
+          galleryData.coverImage
+        );
       }
 
       // Handle content based on type
@@ -255,6 +289,18 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Validate required fields before saving
+      console.log("📝 Gallery data before save:", {
+        title: galleryData.title,
+        slug: galleryData.slug,
+        type: galleryData.type,
+        category: galleryData.category,
+        status: galleryData.status,
+        coverImage: !!galleryData.coverImage,
+        hasContent: !!galleryData.content,
+        itemsCount: galleryData.items.length,
+      });
+
       const gallery = new Gallery(galleryData);
       const savedGallery = await gallery.save();
       return NextResponse.json(
@@ -312,8 +358,45 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
+    console.error("❌ Gallery creation error:", error);
+
+    // Handle specific error types
+    if (error instanceof Error) {
+      // MongoDB duplicate key error
+      if (
+        error.message.includes("duplicate key error") ||
+        error.message.includes("E11000")
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "A gallery item with this title already exists. Please use a different title.",
+            details: "Duplicate slug error",
+          },
+          { status: 400 }
+        );
+      }
+
+      // Validation errors
+      if (error.name === "ValidationError") {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Validation failed",
+            details: error.message,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { success: false, error: "Failed to create gallery item" },
+      {
+        success: false,
+        error: "Failed to create gallery item",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }

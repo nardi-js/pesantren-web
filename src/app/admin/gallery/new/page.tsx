@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AdminApi } from "@/lib/api";
 import { useToast } from "@/components/admin/ToastProvider";
-import { ImageUploader } from "@/components/admin/ImageUploader";
+import { ImageUploader, ImageData } from "@/components/admin/ImageUploader";
 
 export default function NewGalleryPage() {
   const router = useRouter();
@@ -22,9 +22,14 @@ export default function NewGalleryPage() {
     youtubeUrl: "",
     caption: "",
     altText: "",
-    coverImage: "",
-    items: [] as Array<{ url: string; caption: string; }>,
   });
+
+  // Separate state for image files
+  const [coverImageData, setCoverImageData] = useState<ImageData | null>(null);
+  const [contentImageData, setContentImageData] = useState<ImageData | null>(
+    null
+  );
+  const [albumImages, setAlbumImages] = useState<ImageData[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,29 +44,54 @@ export default function NewGalleryPage() {
       return;
     }
 
+    if (formData.type === "image" && !contentImageData) {
+      push("Please select an image for the gallery item", "error");
+      return;
+    }
+
+    if (!coverImageData) {
+      push("Please select a cover image", "error");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const submitData = new FormData();
+
+      // Add basic form data
       submitData.append("title", formData.title);
       submitData.append("description", formData.description);
       submitData.append("type", formData.type);
       submitData.append("category", formData.category);
       submitData.append("status", formData.status);
       submitData.append("featured", formData.featured.toString());
-      
-      if (formData.coverImage) {
-        submitData.append("coverImage", formData.coverImage);
+      submitData.append("tags", JSON.stringify([])); // Empty tags for now
+
+      // Add cover image file
+      if (coverImageData?.file) {
+        submitData.append("coverImage", coverImageData.file);
       }
 
+      // Handle content based on type
       if (formData.type === "video") {
         submitData.append("youtubeUrl", formData.youtubeUrl);
         submitData.append("caption", formData.caption);
-      }
-
-      if (formData.type === "image") {
+      } else if (formData.type === "image") {
+        if (contentImageData?.file) {
+          submitData.append("image", contentImageData.file);
+        }
         submitData.append("caption", formData.caption);
         submitData.append("altText", formData.altText);
+      } else if (formData.type === "album") {
+        // Add album images
+        albumImages.forEach((imageData, index) => {
+          if (imageData.file) {
+            submitData.append("images", imageData.file);
+            submitData.append(`caption_${index}`, imageData.caption || "");
+            submitData.append(`altText_${index}`, imageData.altText || "");
+          }
+        });
       }
 
       const response = await AdminApi.createGalleryItem(submitData);
@@ -72,7 +102,8 @@ export default function NewGalleryPage() {
       } else {
         push(response.error || "Failed to create gallery item", "error");
       }
-    } catch {
+    } catch (error) {
+      console.error("Gallery creation error:", error);
       push("Failed to create gallery item", "error");
     } finally {
       setIsSubmitting(false);
@@ -235,7 +266,8 @@ export default function NewGalleryPage() {
             Upload a cover image for this gallery item
           </p>
           <ImageUploader
-            onUpload={(imageUrl) => setFormData(prev => ({ ...prev, coverImage: imageUrl }))}
+            onImageSelect={(imageData) => setCoverImageData(imageData)}
+            currentImage={coverImageData?.preview}
           />
         </div>
 
@@ -293,52 +325,116 @@ export default function NewGalleryPage() {
             </h2>
 
             <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Main Image *
+                </label>
+                <ImageUploader
+                  onImageSelect={(imageData) => setContentImageData(imageData)}
+                  currentImage={contentImageData?.preview}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Caption
+                </label>
+                <input
+                  type="text"
+                  value={formData.caption}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      caption: e.target.value,
+                    }))
+                  }
+                  placeholder="Image caption"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Alt Text
+                </label>
+                <input
+                  type="text"
+                  value={formData.altText}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      altText: e.target.value,
+                    }))
+                  }
+                  placeholder="Alt text for accessibility"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {formData.type === "album" && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+              Album Images
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Upload multiple images for this album
+            </p>
+
+            <div className="space-y-4">
+              {albumImages.map((imageData, index) => (
+                <div
+                  key={index}
+                  className="flex gap-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg"
+                >
+                  <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imageData.preview}
+                      alt={`Album image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      value={imageData.caption || ""}
+                      onChange={(e) => {
+                        const newAlbumImages = [...albumImages];
+                        newAlbumImages[index] = {
+                          ...imageData,
+                          caption: e.target.value,
+                        };
+                        setAlbumImages(newAlbumImages);
+                      }}
+                      placeholder="Image caption"
+                      className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newAlbumImages = albumImages.filter(
+                          (_, i) => i !== index
+                        );
+                        setAlbumImages(newAlbumImages);
+                      }}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+
               <ImageUploader
-                onUpload={(imageUrl) => {
-                  setFormData(prev => ({
-                    ...prev,
-                    items: [...prev.items, { url: imageUrl, caption: "" }]
-                  }));
+                onImageSelect={(imageData) => {
+                  if (imageData) {
+                    setAlbumImages((prev) => [...prev, imageData]);
+                  }
                 }}
               />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Caption
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.caption}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        caption: e.target.value,
-                      }))
-                    }
-                    placeholder="Image caption"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Alt Text
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.altText}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        altText: e.target.value,
-                      }))
-                    }
-                    placeholder="Alt text for accessibility"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  />
-                </div>
-              </div>
             </div>
           </div>
         )}

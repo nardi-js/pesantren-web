@@ -146,7 +146,7 @@ GallerySchema.index({ status: 1, createdAt: -1 });
 GallerySchema.index({ category: 1, status: 1 });
 GallerySchema.index({ slug: 1 }, { unique: true });
 
-// Pre-save middleware to generate slug
+// Pre-save middleware to generate slug only if not already set
 GallerySchema.pre("save", function (next) {
   if (this.isModified("title") && !this.slug) {
     this.slug = this.title

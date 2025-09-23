@@ -10,6 +10,12 @@ const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
   process.env;
 
 if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+  console.error("❌ Missing Cloudinary environment variables:", {
+    CLOUDINARY_CLOUD_NAME: !!CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: !!CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: !!CLOUDINARY_API_SECRET,
+  });
+  throw new Error("Missing required Cloudinary environment variables");
 }
 
 cloudinary.config({
@@ -223,9 +229,7 @@ export function generateSignedUploadUrl(options: {
   );
 
   return {
-    url: `https://api.cloudinary.com/v1_1/${
-      process.env.CLOUDINARY_CLOUD_NAME
-    }/${options.resourceType || "image"}/upload`,
+    url: `https://api.cloudinary.com/v1_1/${ process.env.CLOUDINARY_CLOUD_NAME }/${options.resourceType || "image"}/upload`,
     params: {
       ...filteredParams,
       signature,

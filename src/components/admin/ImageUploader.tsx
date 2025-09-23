@@ -6,6 +6,8 @@ export interface ImageData {
   preview: string;
   isUploaded?: boolean;
   cloudinaryUrl?: string;
+  caption?: string;
+  altText?: string;
 }
 
 interface ImageUploaderProps {
@@ -135,7 +137,7 @@ export function ImageUploader({
       />
 
       <p className="text-[10px] text-slate-500 dark:text-slate-400 text-center">
-        Image will be uploaded when you publish the post (max 5MB)
+        Upload an image file (max 5MB). Files will be uploaded when you save.
       </p>
 
       <div aria-live="polite" className="sr-only">

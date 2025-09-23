@@ -62,8 +62,7 @@ export default function NewEventPage() {
 
     setIsSubmitting(true);
     try {
-      let imageUrl =
-        formData.featuredImage || "https://via.placeholder.com/800x400";
+      let imageUrl = formData.featuredImage || "https://via.placeholder.com/800x400";
 
       // Upload image to Cloudinary if selected
       if (selectedImage && !selectedImage.isUploaded) {
